@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_lock_app/components/lockCard.dart';
 
@@ -33,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Column(
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Padding(
                           padding: EdgeInsets.only(left: 16.w, top: 41.h),
@@ -56,6 +58,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                 height: 241.h,
                               ),
                             ),
+                          ),
+                        ),
+                        //
+
+                        Padding(
+                          padding: EdgeInsets.only(right: 12.w, top: 41.h),
+                          child: SvgPicture.asset(
+                            'assets/Icons/menuwhite.svg', // Path to Unlocked Bullet SVG
+                            width: 30.w,
+                            height: 30.h,
                           ),
                         ),
                       ],
@@ -99,7 +111,29 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             SizedBox(height: 14.h),
-            const lockCard()
+            const lockCard(
+              home: 'Fifth Settlement',
+              location: 'Front Door',
+              locked: true,
+            ),
+            SizedBox(height: 8.h),
+            const lockCard(
+              home: 'Zayed Home',
+              location: 'Front Door',
+              locked: true,
+            ),
+            SizedBox(height: 8.h),
+            const lockCard(
+              home: 'Fifth Settlement',
+              location: 'Back Door',
+              locked: false,
+            ),
+            SizedBox(height: 8.h),
+            const lockCard(
+              home: 'Fifth Settlement',
+              location: 'Back Door',
+              locked: false,
+            ),
           ],
         ),
       ),
