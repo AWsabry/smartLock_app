@@ -1,31 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_lock_app/views/locksScreen.dart';
 
-class lockCard extends StatelessWidget {
-  const lockCard(
-      {super.key,
-      required this.locked,
-      required this.home,
-      required this.location});
+class PropertiesCard extends StatelessWidget {
+  const PropertiesCard({
+    super.key,
+    required this.numberOfLockes,
+    required this.homeName,
+  });
 
-  final bool locked;
-  final String home;
-  final String location;
+  final int numberOfLockes;
+  final String homeName;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => LocksScreen(
+                      home: homeName,
+                    )));
+      },
       child: Container(
         constraints: BoxConstraints(
           maxWidth: 344.w, // Set your maximum width
         ),
         height: 111.h,
         width: 344.w,
-        decoration: BoxDecoration(
-          boxShadow: const [
+        decoration: const BoxDecoration(
+          boxShadow: [
             BoxShadow(
               color: Color.fromRGBO(
                   0, 1, 2, 0.06), // You can customize the shadow color
@@ -42,7 +48,7 @@ class lockCard extends StatelessWidget {
             ),
           ],
           borderRadius: BorderRadius.all(
-            Radius.circular(8.r),
+            Radius.circular(8),
           ),
         ),
         child: Container(
@@ -69,7 +75,7 @@ class lockCard extends StatelessWidget {
                           Radius.circular(6),
                         ),
                         child: Image.asset(
-                          'assets/Images/lockDemo.png',
+                          'assets/Images/propertiesImage.png',
                           fit: BoxFit.cover,
                           width: 78.w,
                           height: 78.h,
@@ -84,16 +90,16 @@ class lockCard extends StatelessWidget {
                       children: [
                         Padding(
                           padding: EdgeInsets.only(
-                            top: 20.h,
+                            top: 40.h,
                           ),
                           child: Text(
-                            home,
+                            homeName,
                             overflow: TextOverflow.fade,
                             style: GoogleFonts.inter(
                               textStyle: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12.sp,
-                                color: const Color.fromRGBO(107, 114, 128, 1),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 20.sp,
+                                color: const Color.fromRGBO(55, 65, 81, 1),
                               ),
                             ),
                           ),
@@ -101,53 +107,16 @@ class lockCard extends StatelessWidget {
                         Text(
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
-                          location,
+                          '$numberOfLockes Locks',
                           style: GoogleFonts.inter(
                             textStyle: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 20.sp,
-                              color: const Color.fromRGBO(55, 65, 81, 1),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12.sp,
+                              color: const Color.fromRGBO(156, 163, 175, 1),
                             ),
                           ),
                         ),
                       ],
-                    ),
-                    SizedBox(
-                      width: 43.w,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: 45.h,
-                      ),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(
-                            locked
-                                ? 'assets/Icons/Bullet.svg' // Path to Unlocked Bullet SVG
-                                : 'assets/Icons/redBullet.svg', // Path to Locked Bullet SVG
-                            width: 8.w,
-                            height: 8.h,
-                          ),
-                          SizedBox(
-                            width: 4.w,
-                          ),
-                          Text(
-                            overflow: TextOverflow.ellipsis,
-                            locked ? 'Unlocked' : 'Locked',
-                            style: GoogleFonts.inter(
-                              textStyle: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12.sp,
-                                color: locked
-                                    ? const Color.fromRGBO(
-                                        16, 185, 129, 1) // Unlocked color
-                                    : const Color.fromRGBO(
-                                        185, 28, 28, 1), // Locked color
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                   ],
                 ),

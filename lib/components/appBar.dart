@@ -31,7 +31,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           children: [
             Padding(
               padding: EdgeInsets.only(
-                  top: 16.h, left: 16.w, bottom: 16.w, right: 16.w),
+                  top: 16.h, left: 16.w, bottom: 16.h, right: 16.w),
               child: SvgPicture.asset(
                 'assets/Icons/arrow-left.svg',
               ),

@@ -55,10 +55,8 @@ class LoginScreen extends StatelessWidget {
             ),
             PrimaryButton(
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const HomeScreen()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()));
                 },
                 title: 'Log in')
           ],
