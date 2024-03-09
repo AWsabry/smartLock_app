@@ -7,8 +7,25 @@ class LockCubit extends Cubit<LockStates> {
   static LockCubit get(context) => BlocProvider.of(context);
   bool isConnected = false;
   bool isLocked = true;
+  bool isOpen = false;
 
   late int value;
+
+// This Function is Responsible for the state emits based on the variables that is located above and changed by the functions
+  void toggleLock() {
+    switch (isLocked) {
+      case true:
+        emit(UnlockedSuccessfully());
+      case false:
+        emit(LockedSuccessfully());
+        break;
+      default:
+        ConnectionFailed();
+    }
+    isLocked = !isLocked;
+
+    print(state);
+  }
 
   // Function to Check if the door is Locked or not
   Future<bool> lockedCheck() async {

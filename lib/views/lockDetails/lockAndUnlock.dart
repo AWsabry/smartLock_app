@@ -4,9 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_lock_app/components/lockStatus/lockClosed.dart';
+import 'package:smart_lock_app/components/lockStatus/lockDisconnect.dart';
 import 'package:smart_lock_app/components/lockStatus/lockOpened.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockCubit.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockStates.dart';
+import 'package:smart_lock_app/loading.dart';
 
 class LockAndUnlock extends StatefulWidget {
   const LockAndUnlock({super.key});
@@ -16,9 +18,36 @@ class LockAndUnlock extends StatefulWidget {
 }
 
 class _LockAndUnlockState extends State<LockAndUnlock> {
+  bool isLoading = false;
+
+  void _toggleLockState() {
+    setState(() {
+      isLoading = true;
+
+      // Simulate some asynchronous operation
+      Future.delayed(const Duration(milliseconds: 500), () {
+        BlocProvider.of<LockCubit>(context).toggleLock();
+        isLoading = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LockCubit, LockStates>(builder: (context, state) {
+      Widget lockWidget;
+      switch (state) {
+        case LockedSuccessfully():
+          lockWidget = const LockClosed();
+          break;
+        case UnlockedSuccessfully():
+          lockWidget = const LockOpen();
+          break;
+        // Add more cases as needed
+        default:
+          lockWidget =
+              const LockDisconnected(); // Handle other cases if necessary
+      }
       return SafeArea(
           child: Scaffold(
         body: Column(
@@ -200,30 +229,14 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
             SizedBox(
               height: 64.h,
             ),
-            BlocProvider.of<LockCubit>(context).isLocked == true
-                ? const LockClosed()
-                : const LockOpen(),
-
-            Text(BlocProvider.of<LockCubit>(context).isLocked.toString())
-            // Center(
-            //   child: BlocBuilder<LockCubit, LockStates>(
-            //     builder: (context, state) {
-            //       String lockStatus = (state is Locked) ? 'Locked' : 'Unlocked';
-            //       return Text(
-            //         'Lock Status: $lockStatus',
-            //         style: const TextStyle(fontSize: 24),
-            //       );
-            //     },
-            //   ),
-            // ),
+            GestureDetector(
+                onLongPress: () {
+                  _toggleLockState();
+                },
+                child: isLoading ? const Loading() : lockWidget),
+            // Text(BlocProvider.of<LockCubit>(context).isLocked.toString())
           ],
         ),
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: () {
-        //     // BlocProvider.of<LockCubit>(context).toggleLock();
-        //   },
-        //   child: const Icon(Icons.lock),
-        // ),
       ));
     });
   }

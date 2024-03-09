@@ -3,12 +3,8 @@ abstract class LockStates {}
 
 class SuperLockStates extends LockStates {}
 
-class Locked extends LockStates {
-  final int value;
-  Locked(this.value);
-}
+class LockedSuccessfully extends LockStates {}
 
-class Unlocked extends LockStates {
-  final int value;
-  Unlocked(this.value);
-}
+class UnlockedSuccessfully extends LockStates {}
+
+class ConnectionFailed extends LockStates {}

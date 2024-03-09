@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:smart_lock_app/controller/battaryCubit/batteryCubit.dart';
+import 'package:smart_lock_app/controller/cubits/battaryCubit/batteryCubit.dart';
+import 'package:smart_lock_app/controller/cubits/bleCubit/bleCubit.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockCubit.dart';
 import 'package:smart_lock_app/theme.dart';
 import 'package:smart_lock_app/views/main/landingScreen.dart';
@@ -29,10 +30,14 @@ class MyApp extends StatelessWidget {
         child: MultiBlocProvider(
           providers: [
             BlocProvider(
+              create: (context) => BleCubit(),
+            ),
+            BlocProvider(
               create: (context) => LockCubit(),
             ),
             BlocProvider(
-              create: (context) => BatteryCubit(),
+              create: (context) =>
+                  BatteryCubit(bleCubit: BlocProvider.of<BleCubit>(context)),
             ),
           ],
           child: MaterialApp(
