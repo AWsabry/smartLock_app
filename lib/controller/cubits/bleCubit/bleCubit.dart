@@ -12,12 +12,18 @@ class BleCubit extends Cubit<BleStates> {
   var _found = false;
   final _ble = FlutterReactiveBle();
 
-  StreamSubscription<DiscoveredDevice>? _scanSub;
-  StreamSubscription<ConnectionStateUpdate>? _connectSub;
-  StreamSubscription<List<int>>? _notifySub;
+  StreamSubscription<DiscoveredDevice>? scanSub;
+  StreamSubscription<ConnectionStateUpdate>? connectSub;
+  StreamSubscription<List<int>>? notifySub;
 
   String deviceId = '40:4C:CA:41:2A:66';
   String deviceName = 'Smart Lock FP1 Test';
+
+  deviceScan() {
+    Logger().i('Scan in Screen');
+
+    scanSub = _ble.scanForDevices(withServices: []).listen(scanForDevice);
+  }
 
   void scanForDevice(DiscoveredDevice device) {
     Logger().i('Scanning For Device');
@@ -33,7 +39,7 @@ class BleCubit extends Cubit<BleStates> {
   }
 
   void connectDevice({required String deviceId}) {
-    _connectSub = _ble.connectToDevice(id: deviceId).listen((update) {
+    connectSub = _ble.connectToDevice(id: deviceId).listen((update) {
       Logger().i('Connecting ..');
       if (update.connectionState == DeviceConnectionState.connected) {
         Logger().d('Connected');
