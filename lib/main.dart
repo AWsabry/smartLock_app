@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:smart_lock_app/controller/battaryCubit/batteryCubit.dart';
+import 'package:smart_lock_app/controller/cubits/lockCubit/lockCubit.dart';
 import 'package:smart_lock_app/theme.dart';
-import 'package:smart_lock_app/views/landingScreen.dart';
+import 'package:smart_lock_app/views/main/landingScreen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,16 +21,25 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(375, 813),
-      ensureScreenSize: true,
-      minTextAdapt: true,
-      splitScreenMode: true,
-      useInheritedMediaQuery: true,
-      child: MaterialApp(
-        title: 'Smart Lock',
-        theme: MyTheme.lightTheme,
-        home: const LandingScreen(),
-      ),
-    );
+        designSize: const Size(375, 813),
+        ensureScreenSize: true,
+        minTextAdapt: true,
+        splitScreenMode: true,
+        useInheritedMediaQuery: true,
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => LockCubit(),
+            ),
+            BlocProvider(
+              create: (context) => BatteryCubit(),
+            ),
+          ],
+          child: MaterialApp(
+            title: 'Smart Lock',
+            theme: MyTheme.lightTheme,
+            home: const LandingScreen(),
+          ),
+        ));
   }
 }

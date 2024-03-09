@@ -3,12 +3,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_lock_app/components/customDrawer.dart';
-import 'package:smart_lock_app/components/lockCard.dart';
-import 'package:smart_lock_app/components/propertiesCard.dart';
+import 'package:smart_lock_app/models/location/locationCardItem.dart';
+import 'package:smart_lock_app/models/location/locationModel.dart';
+import 'package:smart_lock_app/models/locks/lockCardItem.dart';
+import 'package:smart_lock_app/models/locks/lockModel.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen(
+      {super.key, required this.lockData, required this.locationData});
 
+  final List<LockModel> lockData;
+  final List<LocationModel> locationData;
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -242,42 +247,34 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               SizedBox(height: 24.h),
               if (selectedValue == 'Locks')
-                Column(
-                  children: [
-                    const lockCard(
-                      home: 'Fifth Settlement',
-                      location: 'Front Door',
-                      locked: true,
-                    ),
-                    SizedBox(height: 8.h),
-                    const lockCard(
-                      home: 'Zayed Home',
-                      location: 'Front Door',
-                      locked: true,
-                    ),
-                    SizedBox(height: 8.h),
-                    const lockCard(
-                      home: 'Fifth Settlement',
-                      location: 'Back Door',
-                      locked: false,
-                    ),
-                    SizedBox(height: 8.h),
-                    const lockCard(
-                      home: 'Fifth Settlement',
-                      location: 'Back Door',
-                      locked: false,
-                    ),
-                  ],
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: widget.lockData.length,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        LockCardItem(lock: widget.lockData[index]),
+                        SizedBox(
+                          height: 16.h,
+                        ),
+                      ],
+                    );
+                  },
                 ),
               if (selectedValue == 'Properties')
-                Column(
-                  children: [
-                    const PropertiesCard(numberOfLockes: 3, homeName: 'Haram'),
-                    SizedBox(height: 8.h),
-                    const PropertiesCard(numberOfLockes: 1, homeName: 'Office'),
-                    const PropertiesCard(numberOfLockes: 4, homeName: 'Zayed'),
-                  ],
-                )
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: widget.locationData.length,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        locationCardItem(location: widget.locationData[index])
+                      ],
+                    );
+                  },
+                ),
             ],
           ),
         ),

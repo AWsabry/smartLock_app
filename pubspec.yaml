@@ -38,6 +38,8 @@ dependencies:
   google_fonts: ^6.2.1
   flutter_screenutil: ^5.9.0
   flutter_svg:
+  auto_size_text:
+  flutter_bloc: 
 
 dev_dependencies:
   flutter_test:

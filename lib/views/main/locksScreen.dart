@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smart_lock_app/components/lockCard.dart';
+import 'package:smart_lock_app/models/locks/lockCardItem.dart';
+import 'package:smart_lock_app/models/locks/lockModel.dart';
 
 class LocksScreen extends StatelessWidget {
-  const LocksScreen({super.key, required this.home});
-  final String home;
+  const LocksScreen({super.key, required this.lockData});
+  final List<LockModel> lockData;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -31,27 +33,37 @@ class LocksScreen extends StatelessWidget {
                 height: 80.h,
                 child: Row(
                   children: [
-                    Padding(
-                      padding:
-                          EdgeInsets.only(top: 25.h, left: 10.w, bottom: 32.h),
-                      child: SvgPicture.asset(
-                        'assets/Icons/arrow-left.svg',
-                        height: 24.h,
-                        width: 24.h,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            top: 25.h, left: 10.w, bottom: 32.h),
+                        child: SvgPicture.asset(
+                          'assets/Icons/arrow-left.svg',
+                          height: 24.h,
+                          width: 24.h,
+                        ),
                       ),
                     ),
                     Padding(
                       padding:
                           EdgeInsets.only(top: 25.h, left: 5.w, bottom: 32.h),
-                      child: Text(
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        'Back',
-                        style: GoogleFonts.inter(
-                          textStyle: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14.sp,
-                            color: const Color.fromRGBO(31, 41, 55, 1),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          'Back',
+                          style: GoogleFonts.inter(
+                            textStyle: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14.sp,
+                              color: const Color.fromRGBO(31, 41, 55, 1),
+                            ),
                           ),
                         ),
                       ),
@@ -60,9 +72,9 @@ class LocksScreen extends StatelessWidget {
                       padding:
                           EdgeInsets.only(top: 25.h, left: 67.w, bottom: 32.h),
                       child: Text(
+                        'Zayed Home',
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
-                        'Zayed Home',
                         style: GoogleFonts.inter(
                           textStyle: TextStyle(
                             fontWeight: FontWeight.w500,
@@ -160,15 +172,19 @@ class LocksScreen extends StatelessWidget {
             SizedBox(
               height: 16.h,
             ),
-            lockCard(locked: true, home: home, location: home),
-            SizedBox(
-              height: 16.h,
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: lockData.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  children: [
+                    LockCardItem(lock: lockData[index]),
+                  ],
+                );
+              },
             ),
-            lockCard(locked: true, home: home, location: home),
-            SizedBox(
-              height: 16.h,
-            ),
-            lockCard(locked: true, home: home, location: home),
+            // lockCardItem(locked: true, home: home, location: home),
           ],
         ),
       ),

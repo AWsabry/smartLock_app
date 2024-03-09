@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_lock_app/components/appBar.dart';
+import 'package:smart_lock_app/components/buttons/primaryButton.dart';
 import 'package:smart_lock_app/components/customTextFormField.dart';
-import 'package:smart_lock_app/components/primaryButton.dart';
-import 'package:smart_lock_app/views/homeScreen.dart';
+import 'package:smart_lock_app/models/location/locationModel.dart';
+import 'package:smart_lock_app/models/locks/lockModel.dart';
+import 'package:smart_lock_app/views/main/homeScreen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -55,8 +57,13 @@ class LoginScreen extends StatelessWidget {
             ),
             PrimaryButton(
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => HomeScreen(
+                                lockData: demoLockData,
+                                locationData: demoLocationData,
+                              )));
                 },
                 title: 'Log in')
           ],

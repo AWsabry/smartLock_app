@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:smart_lock_app/components/SecondaryButton.dart';
-import 'package:smart_lock_app/components/primaryButton.dart';
-import 'package:smart_lock_app/views/loginScreen.dart';
+import 'package:smart_lock_app/components/buttons/SecondaryButton.dart';
+import 'package:smart_lock_app/components/buttons/primaryButton.dart';
+import 'package:smart_lock_app/views/auth/loginScreen.dart';
 
 class LandingScreen extends StatelessWidget {
   const LandingScreen({super.key});

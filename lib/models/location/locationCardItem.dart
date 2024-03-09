@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smart_lock_app/views/locksScreen.dart';
+import 'package:smart_lock_app/models/location/locationModel.dart';
+import 'package:smart_lock_app/models/locks/lockModel.dart';
+import 'package:smart_lock_app/views/main/locksScreen.dart';
 
-class PropertiesCard extends StatelessWidget {
-  const PropertiesCard({
-    super.key,
-    required this.numberOfLockes,
-    required this.homeName,
-  });
-
-  final int numberOfLockes;
-  final String homeName;
+class locationCardItem extends StatelessWidget {
+  const locationCardItem({super.key, required this.location});
+  final LocationModel location;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => LocksScreen(
-                      home: homeName,
-                    )));
+          context,
+          MaterialPageRoute(
+            builder: (context) => LocksScreen(
+              lockData: demoLockData,
+            ),
+          ),
+        );
       },
       child: Container(
         constraints: BoxConstraints(
@@ -93,7 +91,7 @@ class PropertiesCard extends StatelessWidget {
                             top: 40.h,
                           ),
                           child: Text(
-                            homeName,
+                            location.homeName,
                             overflow: TextOverflow.fade,
                             style: GoogleFonts.inter(
                               textStyle: TextStyle(
@@ -107,7 +105,7 @@ class PropertiesCard extends StatelessWidget {
                         Text(
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
-                          '$numberOfLockes Locks',
+                          '${location.numberOfLockes} Locks',
                           style: GoogleFonts.inter(
                             textStyle: TextStyle(
                               fontWeight: FontWeight.w500,
