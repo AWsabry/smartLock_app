@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockStates.dart';
 
 class LockCubit extends Cubit<LockStates> {
@@ -23,8 +24,7 @@ class LockCubit extends Cubit<LockStates> {
         ConnectionFailed();
     }
     isLocked = !isLocked;
-
-    print(state);
+    Logger().i(state);
   }
 
   // Function to Check if the door is Locked or not

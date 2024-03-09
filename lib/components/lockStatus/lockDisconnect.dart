@@ -8,27 +8,46 @@ class LockDisconnected extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
       children: [
-        GestureDetector(
-          onTap: () {},
-          child: SvgPicture.asset(
-            'assets/Icons/Ellipse-grey.svg',
-            height: 231.h,
-            width: 231.w,
-          ),
+        Stack(
+          children: [
+            GestureDetector(
+              onTap: () {},
+              child: SvgPicture.asset(
+                'assets/Icons/Ellipse-grey.svg',
+                height: 231.h,
+                width: 231.w,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                  right: 58.w, top: 103.h, left: 58, bottom: 102.h),
+              child: Text(
+                'Disconnected',
+                textAlign: TextAlign.left,
+                style: GoogleFonts.nunitoSans(
+                    textStyle: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 17.sp,
+                        color: Colors.white)),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 36.h,
         ),
         Padding(
-          padding:
-              EdgeInsets.only(right: 58.w, top: 103.h, left: 58, bottom: 102.h),
+          padding: EdgeInsets.only(right: 58.w, left: 58),
           child: Text(
-            'Disconnected',
-            textAlign: TextAlign.left,
-            style: GoogleFonts.nunitoSans(
+            'Please make sure you are connected to the device via Bluetooth, or that the device is connected to the internet.',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.nunito(
                 textStyle: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 17.sp,
-                    color: Colors.white)),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14.sp,
+                    color: const Color.fromRGBO(143, 144, 166, 1))),
           ),
         ),
       ],
