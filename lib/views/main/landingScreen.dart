@@ -1,11 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_lock_app/components/buttons/SecondaryButton.dart';
 import 'package:smart_lock_app/components/buttons/primaryButton.dart';
+import 'package:smart_lock_app/controller/cubits/bleCubit/bleCubit.dart';
 import 'package:smart_lock_app/views/auth/loginScreen.dart';
 
-class LandingScreen extends StatelessWidget {
+class LandingScreen extends StatefulWidget {
   const LandingScreen({super.key});
+
+  @override
+  State<LandingScreen> createState() => _LandingScreenState();
+}
+
+class _LandingScreenState extends State<LandingScreen> {
+  final flutterBle = FlutterReactiveBle();
+
+  @override
+  initState() {
+    final ble = BlocProvider.of<BleCubit>(context);
+    super.initState();
+    ble.requestLocationPermission();
+    ble.scanSub =
+        flutterBle.scanForDevices(withServices: []).listen(ble.scanForDevice);
+  }
 
   @override
   Widget build(BuildContext context) {

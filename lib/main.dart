@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:smart_lock_app/controller/cubits/battaryCubit/batteryCubit.dart';
 import 'package:smart_lock_app/controller/cubits/bleCubit/bleCubit.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockCubit.dart';
 import 'package:smart_lock_app/theme.dart';
@@ -33,11 +32,8 @@ class MyApp extends StatelessWidget {
               create: (context) => BleCubit(),
             ),
             BlocProvider(
-              create: (context) => LockCubit(),
-            ),
-            BlocProvider(
               create: (context) =>
-                  BatteryCubit(bleCubit: BlocProvider.of<BleCubit>(context)),
+                  LockCubit(bleCubit: BlocProvider.of<BleCubit>(context)),
             ),
           ],
           child: MaterialApp(

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart' hide Logger;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_lock_app/components/lockStatus/lockClosed.dart';
 import 'package:smart_lock_app/components/lockStatus/lockDisconnect.dart';
 import 'package:smart_lock_app/components/lockStatus/lockOpened.dart';
+import 'package:smart_lock_app/controller/cubits/bleCubit/bleCubit.dart';
+import 'package:smart_lock_app/controller/cubits/bleCubit/bleStates.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockCubit.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockStates.dart';
 import 'package:smart_lock_app/loading.dart';
@@ -19,6 +22,7 @@ class LockAndUnlock extends StatefulWidget {
 
 class _LockAndUnlockState extends State<LockAndUnlock> {
   bool isLoading = false;
+  final flutterBle = FlutterReactiveBle();
 
   void _toggleLockState() {
     setState(() {
@@ -33,8 +37,33 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
   }
 
   @override
+  initState() {
+    BleStates state;
+    final ble = BlocProvider.of<BleCubit>(context);
+    state = SuccessFullyConnected();
+
+    super.initState();
+    if (state == SuccessFullyConnected()) {
+    } else {
+      ble.scanSub =
+          flutterBle.scanForDevices(withServices: []).listen(ble.scanForDevice);
+    }
+  }
+
+  @override
+  void dispose() {
+    final ble = BlocProvider.of<BleCubit>(context);
+
+    ble.notifySub?.cancel();
+    ble.connectSub?.cancel();
+    ble.scanSub?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<LockCubit, LockStates>(builder: (context, state) {
+      LockCubit cubit = BlocProvider.of<LockCubit>(context);
       Widget lockWidget;
       switch (state) {
         case LockedSuccessfully():
@@ -43,7 +72,9 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
         case UnlockedSuccessfully():
           lockWidget = const LockOpen();
           break;
-        // Add more cases as needed
+        case BleConnectionFailed():
+          lockWidget = const LockDisconnected();
+          break;
         default:
           lockWidget =
               const LockDisconnected(); // Handle other cases if necessary
@@ -203,38 +234,94 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
             SizedBox(
               height: 21.h,
             ),
-            Padding(
-              padding: EdgeInsets.only(
-                right: 16.w,
+
+            if (state is SuccessReadBatteryValues)
+              Padding(
+                padding: EdgeInsets.only(
+                  right: 16.w,
+                ),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 16.w,
+                      ),
+                      child: SvgPicture.asset(
+                        'assets/Icons/battery-blue.svg',
+                        height: 24.h,
+                        width: 24.w,
+                      ),
+                    ),
+                    Text(
+                      cubit.batteryValue.toString(),
+                      textAlign: TextAlign.left,
+                      style: GoogleFonts.nunitoSans(
+                          textStyle: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 10.sp,
+                              color: const Color.fromRGBO(30, 64, 175, 1))),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 256.w,
+                      ),
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            'assets/Icons/wifi-blue.svg',
+                            height: 20.h,
+                            width: 20.w,
+                          ),
+                          SizedBox(
+                            width: 8.w,
+                          ),
+                          SvgPicture.asset(
+                            'assets/Icons/bluetooth.svg',
+                            height: 16.13.h,
+                            width: 11.18.w,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  SvgPicture.asset(
-                    'assets/Icons/wifi-grey.svg',
-                    height: 20.h,
-                    width: 20.w,
-                  ),
-                  SizedBox(
-                    width: 8.w,
-                  ),
-                  SvgPicture.asset(
-                    'assets/Icons/bluetooth-grey.svg',
-                    height: 16.13.h,
-                    width: 11.18.w,
-                  ),
-                ],
+            if (state == BleConnectionFailed())
+              Padding(
+                padding: EdgeInsets.only(
+                  right: 16.w,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    SvgPicture.asset(
+                      'assets/Icons/wifi-grey.svg',
+                      height: 20.h,
+                      width: 20.w,
+                    ),
+                    SizedBox(
+                      width: 8.w,
+                    ),
+                    SvgPicture.asset(
+                      'assets/Icons/bluetooth-grey.svg',
+                      height: 16.13.h,
+                      width: 11.18.w,
+                    ),
+                  ],
+                ),
               ),
-            ),
             SizedBox(
               height: 64.h,
             ),
             GestureDetector(
                 onLongPress: () {
-                  _toggleLockState();
+                  BlocProvider.of<LockCubit>(context).batteryValues();
+                  // _toggleLockState();
                 },
                 child: isLoading ? const Loading() : lockWidget),
             // Text(BlocProvider.of<LockCubit>(context).isLocked.toString())
+            // Text(cubit.batteryValue.toString()),
+            // Text(state.toString())
           ],
         ),
       ));

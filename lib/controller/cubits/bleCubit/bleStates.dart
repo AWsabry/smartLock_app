@@ -2,6 +2,8 @@ abstract class BleStates {}
 
 class SuperBleStates extends BleStates {}
 
+class ScanningDevice extends BleStates {}
+
 // scanForDevice Function States
 class SuccessFullyFoundDevice extends BleStates {}
 
