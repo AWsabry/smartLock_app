@@ -13,7 +13,6 @@ class BleCubit extends Cubit<BleStates> {
   static BleCubit get(context) => BlocProvider.of(context);
   var _found = false;
   final _ble = FlutterReactiveBle();
-
   StreamSubscription<DiscoveredDevice>? scanSub;
   StreamSubscription<ConnectionStateUpdate>? connectSub;
   StreamSubscription<List<int>>? notifySub;
@@ -49,6 +48,9 @@ class BleCubit extends Cubit<BleStates> {
     // Scanning for device
     switch (state) {
       // In case connected Stop Scanning
+      case SuccessFullyFoundDevice():
+        emit(SuccessFullyFoundDevice());
+        break;
       case SuccessFullyConnected():
         emit(SuccessFullyConnected());
         break;
@@ -109,7 +111,7 @@ class BleCubit extends Cubit<BleStates> {
     }
   }
 
-  void writeToCharacteristic({
+  void writeDataToBle({
     required Uuid serviceId,
     required Uuid characteristicId,
     required String data,
@@ -126,7 +128,7 @@ class BleCubit extends Cubit<BleStates> {
         .writeCharacteristicWithoutResponse(characteristic, value: dataBytes)
         .then(
       (_) {
-        print('Write successful');
+        Logger().d("Write successful");
       },
     ).catchError(
       (error) {
