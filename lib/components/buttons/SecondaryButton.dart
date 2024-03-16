@@ -2,24 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SecondaryButton extends StatelessWidget {
-  const SecondaryButton({super.key, required this.onTap, required this.title});
+  const SecondaryButton({
+    super.key,
+    required this.onTap,
+    required this.title,
+    required this.height,
+    required this.width,
+  });
 
   final String title;
   final VoidCallback onTap;
+  final double height;
+  final double width;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 42.h,
-      width: 360.w,
-      decoration: BoxDecoration(
-        border: Border.all(color: const Color.fromRGBO(209, 213, 219, 1)),
-        borderRadius: const BorderRadius.all(
-          Radius.circular(6),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: height.h,
+        width: width.w,
+        decoration: BoxDecoration(
+          border: Border.all(color: const Color.fromRGBO(209, 213, 219, 1)),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(6),
+          ),
+          color: Colors.white,
         ),
-        color: Colors.white,
-      ),
-      child: GestureDetector(
-        onTap: onTap,
         child: Center(
           child: Text(
             title,

@@ -121,8 +121,8 @@ class LockCubit extends Cubit<LockStates> {
         return 0; // Return a default value to indicate error
       }
     } else {
-      Logger().e('Connection Failed');
-      emit(FailedToReadBatteryValues());
+      Logger().e('Ble Connection Failed');
+      emit(FailedToReadTheLockStateCharacteristics());
       return 0;
     }
   }

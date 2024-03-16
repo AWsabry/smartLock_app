@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_lock_app/components/buttons/SecondaryButton.dart';
 import 'package:smart_lock_app/components/buttons/primaryButton.dart';
 import 'package:smart_lock_app/views/auth/loginScreen.dart';
+import 'package:smart_lock_app/views/calibration/calibrationScreen.dart';
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({super.key});
@@ -103,6 +104,8 @@ class _LandingScreenState extends State<LandingScreen> {
               height: 108.h,
             ),
             PrimaryButton(
+              height: 42,
+              width: 360,
               onTap: () {
                 Navigator.push(
                     context,
@@ -115,7 +118,14 @@ class _LandingScreenState extends State<LandingScreen> {
               height: 15.h,
             ),
             SecondaryButton(
-              onTap: () {},
+              height: 42,
+              width: 360,
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CalibrationScreen()));
+              },
               title: 'I received an invitation',
             )
           ],

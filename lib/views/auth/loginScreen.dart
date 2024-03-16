@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smart_lock_app/components/appBar.dart';
+import 'package:smart_lock_app/components/CustomAppBar.dart';
 import 'package:smart_lock_app/components/buttons/primaryButton.dart';
 import 'package:smart_lock_app/components/customTextFormField.dart';
 import 'package:smart_lock_app/models/location/locationModel.dart';
@@ -56,6 +56,8 @@ class LoginScreen extends StatelessWidget {
               height: 80.h,
             ),
             PrimaryButton(
+                height: 42,
+                width: 360,
                 onTap: () {
                   Navigator.push(
                       context,

@@ -42,7 +42,7 @@ dependencies:
   flutter_bloc: 
   get: ^4.6.5
   permission_handler:
-  flutter_reactive_ble: 
+  flutter_reactive_ble: ^5.0.2
   logger:
   animated_text_kit:
 

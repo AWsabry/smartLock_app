@@ -26,12 +26,12 @@ abstract class SmartLockAppConstants {
     {
       'id': 2,
       'body':
-          "Rotate your lock completely in the UNLOCK Direction, all the way until it stops. \n \n If your thumbturn also operates your latch then hold it in the unlatched position until next step.",
+          "Rotate your lock completely in the UNLOCK Direction, all the way until it stops. \n\nIf your thumbnuts also operates your latch then hold it in the unlatched position until next step.",
     },
     {
       'id': 3,
       'body':
-          "Rotate your lock completely in the LOCK Direction, all the way until it stops. \n\n Hold it in this position until the next step. ",
+          "Rotate your lock completely in the LOCK Direction, all the way until it stops. \n\nHold it in this position until the next step. ",
     },
     {
       'id': 4,
@@ -41,12 +41,12 @@ abstract class SmartLockAppConstants {
     {
       'id': 5,
       'body':
-          "Rotate the thumbnuts until the door is just locked.\n\n If your lock has multiple locked position, just stop after the first position.",
+          "Rotate the thumbnuts until the door is just locked.\n\nIf your lock has multiple locked position, just stop after the first position.",
     },
     {
       'id': 6,
       'body':
-          "keep the door slightly ajar (just enough so that the lock or latch is more in the door frame)",
+          "Keep the door slightly ajar (just enough so that the lock or latch is more in the door frame)",
     },
     {
       'id': 7,
