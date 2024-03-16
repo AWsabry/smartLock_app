@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_lock_app/controller/cubits/bleCubit/bleCubit.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockCubit.dart';
 import 'package:smart_lock_app/theme.dart';
-import 'package:smart_lock_app/views/main/landingScreen.dart';
+import 'package:smart_lock_app/views/mainScreens/landingScreen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

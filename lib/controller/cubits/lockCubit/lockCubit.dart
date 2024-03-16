@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart' hide Logger;
 import 'package:logger/logger.dart';
 import 'package:smart_lock_app/components/lockStatus/lockClosed.dart';
+import 'package:smart_lock_app/components/lockStatus/lockDisconnect.dart';
 import 'package:smart_lock_app/components/lockStatus/lockOpen.dart';
 import 'package:smart_lock_app/components/lockStatus/unlockClosed.dart';
 import 'package:smart_lock_app/components/lockStatus/unlockOpen.dart';
@@ -13,8 +14,6 @@ class LockCubit extends Cubit<LockStates> {
   LockCubit() : super(SuperLockStates());
 
   static LockCubit get(context) => BlocProvider.of(context);
-  // ble Cubit Extend
-  // ble Connection Check
 
   // Check if the dor is locked or not
   bool isLocked = true;
@@ -24,8 +23,11 @@ class LockCubit extends Cubit<LockStates> {
   bool calibrationSuccess = false;
 
   List<int> valueInDevice = [];
+  // ignore: prefer_typing_uninitialized_variables
   var batteryValue;
+  // ignore: prefer_typing_uninitialized_variables
   var doorIsOpenValueFromDevice;
+  // ignore: prefer_typing_uninitialized_variables
   var characteristicsValues;
 
   String deviceId = '40:4C:CA:41:2A:66';
@@ -37,6 +39,21 @@ class LockCubit extends Cubit<LockStates> {
     'JLP',
     'JULP',
   ];
+  // Check Lock Value
+  int lockStateValue = 0;
+
+  // ble Connection Check
+  Future<bool> checkConnection(context) async {
+    BleCubit bleCubit = BlocProvider.of<BleCubit>(context);
+    if (bleCubit.isConnected) {
+      return true;
+    } else {
+      bleCubit.isConnected == false;
+      lockStateValue = 0;
+    }
+    return true;
+  }
+
 // Check if the door is Opened
   Future<bool> isOpen(context) async {
     try {
@@ -68,46 +85,72 @@ class LockCubit extends Cubit<LockStates> {
     return isDoorOpen;
   }
 
-  // Function to Check if the door is Locked or not
-  Future<Widget> lockStateCharacteristics(context) async {
-    try {
-      var bleCubit = BleCubit.get(context);
+  // Function to read the lock state values
+  Future<int> readLockStateValues(BuildContext context) async {
+    if (await checkConnection(context)) {
+      try {
+        var bleCubit = BleCubit.get(context);
+        int value = await bleCubit.readDataFromBle(
+          serviceId: Uuid.parse('AAAA'),
+          characteristicId: Uuid.parse('AA01'),
+        );
+        bleCubit.isConnected = true;
+        characteristicsValues = value;
+        Logger().i("characteristicsValues Value is $characteristicsValues");
+        emit(ReadTheLockStateCharacteristicsSuccessfully());
+        switch (characteristicsValues) {
+          case 2:
+            lockStateValue = 2;
+            return lockStateValue;
+          case 3:
+            lockStateValue = 3;
+            return lockStateValue;
+          case 4:
+            lockStateValue = 4;
+            return lockStateValue;
+          case 5:
+            lockStateValue = 5;
+            return lockStateValue;
+          default:
+            return lockStateValue = 0;
+        }
+      } catch (e) {
+        Logger().e('Error in the Try of readLockStateValues Function');
+        Logger().e(e);
+        emit(FailedToReadTheLockStateCharacteristics());
+        return 0; // Return a default value to indicate error
+      }
+    } else {
+      Logger().e('Connection Failed');
+      emit(FailedToReadBatteryValues());
+      return 0;
+    }
+  }
 
-      int value = await bleCubit.readDataFromBle(
-        serviceId: Uuid.parse('AAAA'),
-        characteristicId: Uuid.parse('AA01'),
-      );
-      bleCubit.isConnected = true;
-      characteristicsValues = value;
-      Logger().i("characteristicsValues Value is $characteristicsValues");
-      emit(ReadTheLockStateCharacteristicsSuccessfully());
-
-      switch (value) {
+  // Function to render the Future<Widget>
+  Future<Widget> renderLockStateWidget(BuildContext context) async {
+    if (await checkConnection(context)) {
+      switch (lockStateValue) {
+        case 0:
+          return const LockDisconnected();
         case 2:
-          print(lockStateList[0]);
-          return const LockOpen();
-        case 3:
-          print(lockStateList[1]);
+          Logger().i('State is ${lockStateList[0]} with value $lockStateValue');
           return const LockClosed();
-        case 4:
-          print(lockStateList[2]);
+        case 3:
+          Logger().i('State is ${lockStateList[1]} with value $lockStateValue');
           return const UnlockClosed();
+        case 4:
+          Logger().i('State is ${lockStateList[2]} with value $lockStateValue');
+          return const LockOpen();
         case 5:
-          print(lockStateList[3]);
+          Logger().i('State is ${lockStateList[3]} with value $lockStateValue');
           return const UnlockOpen();
         default:
-          break;
+          return const Text("Error in Connections");
       }
-    } catch (e) {
-      Logger().e('Error in the Try of lockStateCharacteristics Function');
-      Logger().e(e);
-      emit(FailedToReadTheLockStateCharacteristics());
+    } else {
+      return const LockDisconnected();
     }
-    return const SizedBox(
-      child: Center(
-        child: Text("Connecting"),
-      ),
-    );
   }
 
   // Lock & Unlock
@@ -127,12 +170,15 @@ class LockCubit extends Cubit<LockStates> {
         case '2':
           emit(LockedSuccessfully());
           isLocked == true;
+          Logger().i("isLocked + $isLocked");
           break;
         case '3':
           emit(UnlockedSuccessfully());
           isLocked == false;
+          Logger().i("isLocked + $isLocked");
           break;
         default:
+          break;
       }
     } catch (e) {
       Logger().e('Error in the Try of lockControl Function');
@@ -141,27 +187,33 @@ class LockCubit extends Cubit<LockStates> {
     }
   }
 
-  //  Read the battery Values
+  // Read the battery Values
   Future<void> batteryValues(context) async {
-    try {
-      var bleCubit = BleCubit.get(context);
+    if (await checkConnection(context)) {
+      try {
+        var bleCubit = BleCubit.get(context);
 
-      bleCubit.isConnected = true;
-      int value = await bleCubit.readDataFromBle(
-        serviceId: Uuid.parse('CCCC'),
-        characteristicId: Uuid.parse('CC01'),
-      );
+        bleCubit.isConnected = true;
+        int value = await bleCubit.readDataFromBle(
+          serviceId: Uuid.parse('CCCC'),
+          characteristicId: Uuid.parse('CC01'),
+        );
 
-      batteryValue = value;
-      Logger().i("Battery Value is $batteryValue");
-      emit(SuccessReadBatteryValues());
-    } catch (e) {
-      Logger().e('Error in the Try of batteryValues Function');
-      Logger().e(e);
+        batteryValue = value;
+        Logger().i("Battery Value is $batteryValue");
+        emit(SuccessReadBatteryValues());
+      } catch (e) {
+        Logger().e('Error in the Try of batteryValues Function');
+        Logger().e(e);
+        emit(FailedToReadBatteryValues());
+      }
+    } else {
+      Logger().e('Connection Failed');
       emit(FailedToReadBatteryValues());
     }
   }
 
+  // Permission To start Calibrating
   Future<void> calibrationControl(context) async {
     try {
       var bleCubit = BleCubit.get(context);
@@ -180,6 +232,7 @@ class LockCubit extends Cubit<LockStates> {
     }
   }
 
+  // Calibrating Status
   Future calibrationCharacteristic(context) async {
     try {
       var bleCubit = BleCubit.get(context);
@@ -189,6 +242,7 @@ class LockCubit extends Cubit<LockStates> {
         characteristicId: Uuid.parse('DD04'),
       );
       bleCubit.isConnected = true;
+      Logger().i('State Written is $value');
       // Switch Case to check if the Calibration Success or not
       switch (value) {
         case 2:
@@ -208,6 +262,7 @@ class LockCubit extends Cubit<LockStates> {
 
   // Function to Calibrate the lock
   Future lockingMechanismCalibration(context, {required String data}) async {
+    // calibrationCharacteristic(context);
     try {
       var bleCubit = BleCubit.get(context);
 
@@ -220,17 +275,28 @@ class LockCubit extends Cubit<LockStates> {
       emit(WriteSuccessfully());
       switch (data) {
         case '2':
+          Logger().i(
+              'State Written is ${lockStateList[0]} with value $lockStateValue');
+          data = lockStateValue.toString();
           return lockStateList[0];
         case '3':
+          Logger().i(
+              'State Written is ${lockStateList[1]} with value $lockStateValue');
+          data = lockStateValue.toString();
           return lockStateList[1];
         case '4':
+          Logger().i(
+              'State Written is ${lockStateList[2]} with value $lockStateValue');
+          data = lockStateValue.toString();
           return lockStateList[2];
         case '5':
+          Logger().i(
+              'State Written is ${lockStateList[3]} with value $lockStateValue');
+          data = lockStateValue.toString();
           return lockStateList[3];
         default:
           break;
       }
-      calibrationCharacteristic(context);
     } catch (e) {
       Logger().e('Error in the Try of lockControl Function');
       Logger().e(e);

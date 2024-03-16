@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,12 +13,12 @@ class BleCubit extends Cubit<BleStates> {
   static BleCubit get(context) => BlocProvider.of(context);
   var _found = false;
   final _ble = FlutterReactiveBle();
-  bool isConnected = true;
+  bool isConnected = false;
   StreamSubscription<DiscoveredDevice>? scanSub;
   StreamSubscription<ConnectionStateUpdate>? connectSub;
   StreamSubscription<List<int>>? notifySub;
 
-  String deviceId = '7E:A5:42:90:BF:F5';
+  String deviceId = '40:4C:CA:41:2A:66';
   String deviceName = 'Smart Lock FP1 Test';
 
   List<int> valueInDevice = [];
@@ -56,7 +55,7 @@ class BleCubit extends Cubit<BleStates> {
     required DiscoveredDevice device,
     required BuildContext context,
   }) async {
-    log('State: ${state.toString()}');
+    // log('State: ${state.toString()}');
 
     // Scanning for device
     switch (state) {
@@ -67,7 +66,6 @@ class BleCubit extends Cubit<BleStates> {
       case SuccessFullyConnected():
         isConnected = true;
         emit(SuccessFullyConnected());
-
         break;
       default:
         emit(ScanningDevice());
@@ -76,10 +74,7 @@ class BleCubit extends Cubit<BleStates> {
         if (device.name == deviceName || device.id == deviceId) {
           _found = true;
           Logger().i(_found);
-
           try {
-            Logger().i("Wala");
-
             connectDevice(deviceId: deviceId);
             // Logger().i('Device Connected SuccessFully');
             // emit(SuccessFullyConnected());
@@ -131,7 +126,7 @@ class BleCubit extends Cubit<BleStates> {
           characteristicId: characteristicId,
         ),
       );
-      Logger().i(valueInDevice[0]);
+      Logger().i("Reading in the Read Function ${valueInDevice[0]}");
       return valueInDevice[0];
     } catch (error) {
       Logger().e('Error reading characteristic: $error');

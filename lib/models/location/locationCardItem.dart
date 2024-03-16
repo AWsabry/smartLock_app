@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_lock_app/models/location/locationModel.dart';
 import 'package:smart_lock_app/models/locks/lockModel.dart';
-import 'package:smart_lock_app/views/main/locksScreen.dart';
+import 'package:smart_lock_app/views/mainScreens/locksScreen.dart';
 
 class locationCardItem extends StatelessWidget {
   const locationCardItem({super.key, required this.location});

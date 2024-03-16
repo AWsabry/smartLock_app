@@ -27,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen>
       bleCubit.isConnected = true;
     } else {
       bleCubit.requestLocationPermission(context: context);
-      bleCubit.isConnected = true;
+      bleCubit.isConnected = false;
     }
   }
 

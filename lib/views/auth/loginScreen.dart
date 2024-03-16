@@ -6,7 +6,7 @@ import 'package:smart_lock_app/components/buttons/primaryButton.dart';
 import 'package:smart_lock_app/components/customTextFormField.dart';
 import 'package:smart_lock_app/models/location/locationModel.dart';
 import 'package:smart_lock_app/models/locks/lockModel.dart';
-import 'package:smart_lock_app/views/main/homeScreen.dart';
+import 'package:smart_lock_app/views/mainScreens/homeScreen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});

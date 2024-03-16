@@ -10,30 +10,33 @@ class LockDisconnected extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Stack(
-          children: [
-            GestureDetector(
-              onTap: () {},
-              child: SvgPicture.asset(
-                'assets/Icons/Ellipse-grey.svg',
-                height: 231.h,
-                width: 231.w,
+        GestureDetector(
+          onLongPress: () {},
+          child: Stack(
+            children: [
+              GestureDetector(
+                onTap: () {},
+                child: SvgPicture.asset(
+                  'assets/Icons/Ellipse-grey.svg',
+                  height: 231.h,
+                  width: 231.w,
+                ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                  right: 58.w, top: 103.h, left: 58, bottom: 102.h),
-              child: Text(
-                'Disconnected',
-                textAlign: TextAlign.left,
-                style: GoogleFonts.nunitoSans(
-                    textStyle: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 17.sp,
-                        color: Colors.white)),
+              Padding(
+                padding: EdgeInsets.only(
+                    right: 58.w, top: 103.h, left: 58, bottom: 102.h),
+                child: Text(
+                  'Disconnected',
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.nunitoSans(
+                      textStyle: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 17.sp,
+                          color: Colors.white)),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         SizedBox(
           height: 36.h,

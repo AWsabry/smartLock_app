@@ -4,8 +4,7 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart' hide Logger;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smart_lock_app/controller/cubits/bleCubit/bleCubit.dart';
-import 'package:smart_lock_app/controller/cubits/bleCubit/bleStates.dart';
+import 'package:smart_lock_app/components/batteryBleWifiRead.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockCubit.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockStates.dart';
 
@@ -21,36 +20,18 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
   final flutterBle = FlutterReactiveBle();
 
   @override
-  // initState() {
-  //   BleStates state;
-  //   final ble = BlocProvider.of<BleCubit>(context);
-
-  //   super.initState();
-  //   ble.requestLocationPermission();
-  //   ble.scanSub =
-  //       flutterBle.scanForDevices(withServices: []).listen(ble.scanForDevice);
-  //   if (BlocProvider.of<LockCubit>(context).bleCubit.isConnected == true) {
-  //     BlocProvider.of<LockCubit>(context).batteryValues();
-  //   } else {
-  //     print('asd');
-  //     // BlocProvider.of<LockCubit>(context).batteryValues();
-  //   }
-  // }
-
-  @override
-  void dispose() {
-    final ble = BlocProvider.of<BleCubit>(context);
-    ble.notifySub?.cancel();
-    ble.connectSub?.cancel();
-    ble.scanSub?.cancel();
-    super.dispose();
+  void initState() {
+    super.initState();
+    LockCubit cubit = BlocProvider.of<LockCubit>(context);
+    cubit.readLockStateValues(context);
+    cubit.batteryValues(context);
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BleCubit, BleStates>(builder: (ctx, state) {
+    return BlocBuilder<LockCubit, LockStates>(builder: (ctx, state) {
       final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-      LockCubit cubit = BlocProvider.of<LockCubit>(context);
 
       return SafeArea(
           child: Scaffold(
@@ -208,121 +189,26 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
             SizedBox(
               height: 21.h,
             ),
-            Padding(
-              padding: EdgeInsets.only(
-                right: 16.w,
-              ),
-              child: Row(
-                mainAxisAlignment: state is BleConnectionFailed
-                    ? MainAxisAlignment.end
-                    : MainAxisAlignment.spaceBetween,
-                children: [
-                  if (BleCubit.get(context).isConnected == true)
-                    Padding(
-                      padding: EdgeInsets.only(left: 16.w),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(
-                            'assets/Icons/battery-blue.svg',
-                            height: 24.h,
-                            width: 24.w,
-                          ),
-                          Text(
-                            cubit.batteryValue.toString(),
-                            textAlign: TextAlign.left,
-                            style: GoogleFonts.nunitoSans(
-                              textStyle: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 10.sp,
-                                color: const Color.fromRGBO(30, 64, 175, 1),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 16.w),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          height: 24.h,
-                          width: 38.w,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: 200.w,
-                    ),
-                    child: SvgPicture.asset(
-                      BleCubit.get(context).isConnected == false
-                          ? 'assets/Icons/wifi-grey.svg'
-                          : 'assets/Icons/wifi-blue.svg',
-                      height: 20.h,
-                      width: 20.w,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 8.w,
-                  ),
-                  SvgPicture.asset(
-                    BleCubit.get(context).isConnected == false
-                        ? 'assets/Icons/bluetooth-grey.svg'
-                        : 'assets/Icons/bluetooth.svg',
-                    height: 16.13.h,
-                    width: 11.18.w,
-                  ),
-                ],
-              ),
-            ),
+            const BatteryBleRead(),
             SizedBox(
               height: 64.h,
             ),
             FutureBuilder(
                 future: BlocProvider.of<LockCubit>(context)
-                    .lockStateCharacteristics(context),
-                builder: (context, snapshot) {
+                    .renderLockStateWidget(context),
+                builder: (context, AsyncSnapshot<Widget> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
                   } else {
-                    return snapshot.data ??
-                        const Text('No Data'); // Handle null case if needed
+                    if (snapshot.hasError) {
+                      // Show error message
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      // Show the widget returned by the future
+                      return snapshot.data ?? const Text('No Data');
+                    }
                   }
                 })
-
-            // GestureDetector(
-            //   onLongPress: () {
-            //     if (state is ScanningDevice) {
-            //       Logger().i("Still Scanning");
-            //     } else {
-            //       // Read The battery Values
-            //       // BlocProvider.of<LockCubit>(context).batteryValues();
-            //       // // Lock and Unlock
-            //       // BlocProvider.of<LockCubit>(context).lockControl(data: '2');
-            //       // // Check if the door is opened
-            //       // BlocProvider.of<LockCubit>(context).isOpen();
-            //       // Load the lockStateCharacteristics
-            //       // BlocProvider.of<LockCubit>(context)
-            //       //     .lockStateCharacteristics();
-
-            //       print(cubit.isDoorOpen);
-            //       print(cubit.bleCubit.isConnected);
-            //     }
-            //     // _toggleLockState();
-            //   },
-            //   // child: isLoading ? const Loading() : lockWidget),
-            //   child: const LockClosed(),
-            //   // Text(BlocProvider.of<LockCubit>(context).isLocked.toString()),
-            //   // Text(cubit.batteryValue.toString()),
-            //   // Text(BlocProvider.of<LockCubit>(context)
-            //   //     .bleCubit
-            //   //     .isConnected
-            //   //     .toString()
-            // )
           ],
         ),
       ));
