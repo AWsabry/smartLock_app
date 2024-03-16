@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_reactive_ble/flutter_reactive_ble.dart' hide Logger;
 import 'package:logger/logger.dart';
 import 'package:smart_lock_app/controller/cubits/bleCubit/bleCubit.dart';
 import 'package:smart_lock_app/controller/cubits/bleCubit/bleStates.dart';
@@ -15,28 +14,27 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
-  final _ble = FlutterReactiveBle();
+  // final _ble = FlutterReactiveBle();
 
   @override
   void initState() {
     super.initState();
-    final bleCubit = BlocProvider.of<BleCubit>(context);
-
-    if (bleCubit.state == SuccessFullyFoundDevice()) {
+    final bleCubit = BleCubit.get(context);
+    if (bleCubit.state is SuccessFullyFoundDevice) {
       bleCubit.isConnected = false;
       Logger().i("Device Found");
-    } else if (bleCubit.state == SuccessFullyConnected()) {
+    } else if (bleCubit.state is SuccessFullyConnected) {
       bleCubit.isConnected = true;
     } else {
       bleCubit.requestLocationPermission(context: context);
-      bleCubit.isConnected = false;
+      bleCubit.isConnected = true;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BleCubit, BleStates>(builder: (context, state) {
-      final bleCubit = BlocProvider.of<BleCubit>(context);
+    return BlocBuilder<BleCubit, BleStates>(
+        builder: (BuildContext context, BleStates state) {
       final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
       return Scaffold(
@@ -49,23 +47,17 @@ class _SplashScreenState extends State<SplashScreen>
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) {
+                      builder: (BuildContext context) {
                         return const LockAndUnlock();
                       },
                     ),
                   );
                 },
                 child: const Text("asd")),
-            // AnimatedOpacity(
-            //   opacity: bleCubit.isConnected ? 0.5 : 1.0,
-            //   duration: const Duration(milliseconds: 500),
-            //   child: Text(
-            //     bleCubit.isConnected ? 'Navigating...' : 'Your text',
-            //     style: const TextStyle(fontSize: 24),
-            //   ),
-            // ),
-            Center(child: Text("Connected is ${bleCubit.isConnected}")),
-            Center(child: Text("Connected is ${bleCubit.state}")),
+            Center(
+                child:
+                    Text("Connected is ${BleCubit.get(context).isConnected}")),
+            Center(child: Text("Connected is ${BleCubit.get(context).state}")),
           ],
         ),
       );

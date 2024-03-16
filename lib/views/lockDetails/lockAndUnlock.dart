@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_lock_app/controller/cubits/bleCubit/bleCubit.dart';
+import 'package:smart_lock_app/controller/cubits/bleCubit/bleStates.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockCubit.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockStates.dart';
 
@@ -47,7 +48,7 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LockCubit, LockStates>(builder: (ctx, state) {
+    return BlocBuilder<BleCubit, BleStates>(builder: (ctx, state) {
       final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
       LockCubit cubit = BlocProvider.of<LockCubit>(context);
 
@@ -216,10 +217,7 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
                     ? MainAxisAlignment.end
                     : MainAxisAlignment.spaceBetween,
                 children: [
-                  if (BlocProvider.of<LockCubit>(context)
-                          .bleCubit
-                          .isConnected ==
-                      true)
+                  if (BleCubit.get(context).isConnected == true)
                     Padding(
                       padding: EdgeInsets.only(left: 16.w),
                       child: Row(
@@ -259,10 +257,7 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
                       left: 200.w,
                     ),
                     child: SvgPicture.asset(
-                      BlocProvider.of<LockCubit>(context)
-                                  .bleCubit
-                                  .isConnected ==
-                              false
+                      BleCubit.get(context).isConnected == false
                           ? 'assets/Icons/wifi-grey.svg'
                           : 'assets/Icons/wifi-blue.svg',
                       height: 20.h,
@@ -273,8 +268,7 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
                     width: 8.w,
                   ),
                   SvgPicture.asset(
-                    BlocProvider.of<LockCubit>(context).bleCubit.isConnected ==
-                            false
+                    BleCubit.get(context).isConnected == false
                         ? 'assets/Icons/bluetooth-grey.svg'
                         : 'assets/Icons/bluetooth.svg',
                     height: 16.13.h,
@@ -288,7 +282,7 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
             ),
             FutureBuilder(
                 future: BlocProvider.of<LockCubit>(context)
-                    .lockStateCharacteristics(),
+                    .lockStateCharacteristics(context),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();

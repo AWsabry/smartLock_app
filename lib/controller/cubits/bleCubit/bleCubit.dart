@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,16 +11,15 @@ import 'package:smart_lock_app/controller/cubits/bleCubit/bleStates.dart';
 
 class BleCubit extends Cubit<BleStates> {
   BleCubit() : super(SuperBleStates());
-
   static BleCubit get(context) => BlocProvider.of(context);
   var _found = false;
   final _ble = FlutterReactiveBle();
-  bool isConnected = false;
+  bool isConnected = true;
   StreamSubscription<DiscoveredDevice>? scanSub;
   StreamSubscription<ConnectionStateUpdate>? connectSub;
   StreamSubscription<List<int>>? notifySub;
 
-  String deviceId = '40:4C:CA:41:2A:66';
+  String deviceId = '7E:A5:42:90:BF:F5';
   String deviceName = 'Smart Lock FP1 Test';
 
   List<int> valueInDevice = [];
@@ -33,8 +33,7 @@ class BleCubit extends Cubit<BleStates> {
 
     // Permission granted, proceed with BLE scanning
     if (status.isGranted) {
-      if (state == SuccessFullyFoundDevice() ||
-          state == SuccessFullyConnected()) {
+      if (state is SuccessFullyFoundDevice || state is SuccessFullyConnected) {
       } else {
         scanSub = _ble.scanForDevices(
           withServices: [],
@@ -57,6 +56,8 @@ class BleCubit extends Cubit<BleStates> {
     required DiscoveredDevice device,
     required BuildContext context,
   }) async {
+    log('State: ${state.toString()}');
+
     // Scanning for device
     switch (state) {
       // In case connected Stop Scanning
@@ -72,7 +73,7 @@ class BleCubit extends Cubit<BleStates> {
         emit(ScanningDevice());
 
         Logger().i('Scanning For Device');
-        if (device.name == deviceName || device.id == deviceId && !_found) {
+        if (device.name == deviceName || device.id == deviceId) {
           _found = true;
           Logger().i(_found);
 

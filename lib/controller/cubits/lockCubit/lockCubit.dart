@@ -10,11 +10,10 @@ import 'package:smart_lock_app/controller/cubits/bleCubit/bleCubit.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockStates.dart';
 
 class LockCubit extends Cubit<LockStates> {
-  LockCubit({required this.bleCubit}) : super(SuperLockStates());
+  LockCubit() : super(SuperLockStates());
 
   static LockCubit get(context) => BlocProvider.of(context);
   // ble Cubit Extend
-  final BleCubit bleCubit;
   // ble Connection Check
 
   // Check if the dor is locked or not
@@ -39,8 +38,9 @@ class LockCubit extends Cubit<LockStates> {
     'JULP',
   ];
 // Check if the door is Opened
-  Future<bool> isOpen() async {
+  Future<bool> isOpen(context) async {
     try {
+      var bleCubit = BleCubit.get(context);
       int value = await bleCubit.readDataFromBle(
         serviceId: Uuid.parse('AAAA'),
         characteristicId: Uuid.parse('AA02'),
@@ -69,8 +69,10 @@ class LockCubit extends Cubit<LockStates> {
   }
 
   // Function to Check if the door is Locked or not
-  Future<Widget> lockStateCharacteristics() async {
+  Future<Widget> lockStateCharacteristics(context) async {
     try {
+      var bleCubit = BleCubit.get(context);
+
       int value = await bleCubit.readDataFromBle(
         serviceId: Uuid.parse('AAAA'),
         characteristicId: Uuid.parse('AA01'),
@@ -109,8 +111,10 @@ class LockCubit extends Cubit<LockStates> {
   }
 
   // Lock & Unlock
-  Future<void> lockControl({required String data}) async {
+  Future<void> lockControl(context, {required String data}) async {
     try {
+      var bleCubit = BleCubit.get(context);
+
       bleCubit.writeDataToBle(
         serviceId: Uuid.parse('AAAA'),
         characteristicId: Uuid.parse('AA03'),
@@ -138,8 +142,10 @@ class LockCubit extends Cubit<LockStates> {
   }
 
   //  Read the battery Values
-  Future<void> batteryValues() async {
+  Future<void> batteryValues(context) async {
     try {
+      var bleCubit = BleCubit.get(context);
+
       bleCubit.isConnected = true;
       int value = await bleCubit.readDataFromBle(
         serviceId: Uuid.parse('CCCC'),
@@ -156,8 +162,10 @@ class LockCubit extends Cubit<LockStates> {
     }
   }
 
-  Future<void> calibrationControl() async {
+  Future<void> calibrationControl(context) async {
     try {
+      var bleCubit = BleCubit.get(context);
+
       bleCubit.writeDataToBle(
         serviceId: Uuid.parse('DDDD'),
         characteristicId: Uuid.parse('DD01'),
@@ -172,8 +180,10 @@ class LockCubit extends Cubit<LockStates> {
     }
   }
 
-  Future calibrationCharacteristic() async {
+  Future calibrationCharacteristic(context) async {
     try {
+      var bleCubit = BleCubit.get(context);
+
       int value = await bleCubit.readDataFromBle(
         serviceId: Uuid.parse('DDDD'),
         characteristicId: Uuid.parse('DD04'),
@@ -197,8 +207,10 @@ class LockCubit extends Cubit<LockStates> {
   }
 
   // Function to Calibrate the lock
-  Future lockingMechanismCalibration({required String data}) async {
+  Future lockingMechanismCalibration(context, {required String data}) async {
     try {
+      var bleCubit = BleCubit.get(context);
+
       bleCubit.writeDataToBle(
         serviceId: Uuid.parse('DDDD'),
         characteristicId: Uuid.parse('DD02'),
@@ -218,7 +230,7 @@ class LockCubit extends Cubit<LockStates> {
         default:
           break;
       }
-      calibrationCharacteristic();
+      calibrationCharacteristic(context);
     } catch (e) {
       Logger().e('Error in the Try of lockControl Function');
       Logger().e(e);

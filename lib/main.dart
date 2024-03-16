@@ -32,8 +32,7 @@ class MyApp extends StatelessWidget {
               create: (context) => BleCubit(),
             ),
             BlocProvider(
-              create: (context) =>
-                  LockCubit(bleCubit: BlocProvider.of<BleCubit>(context)),
+              create: (context) => LockCubit(),
             ),
           ],
           child: MaterialApp(
