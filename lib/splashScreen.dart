@@ -4,6 +4,7 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart' hide Logger;
 import 'package:logger/logger.dart';
 import 'package:smart_lock_app/controller/cubits/bleCubit/bleCubit.dart';
 import 'package:smart_lock_app/controller/cubits/bleCubit/bleStates.dart';
+import 'package:smart_lock_app/views/lockDetails/lockAndUnlock.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -43,6 +44,18 @@ class _SplashScreenState extends State<SplashScreen>
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return const LockAndUnlock();
+                      },
+                    ),
+                  );
+                },
+                child: const Text("asd")),
             // AnimatedOpacity(
             //   opacity: bleCubit.isConnected ? 0.5 : 1.0,
             //   duration: const Duration(milliseconds: 500),

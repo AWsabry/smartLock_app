@@ -7,7 +7,6 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart' hide Logger;
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smart_lock_app/controller/cubits/bleCubit/bleStates.dart';
-import 'package:smart_lock_app/views/lockDetails/lockAndUnlock.dart';
 
 class BleCubit extends Cubit<BleStates> {
   BleCubit() : super(SuperBleStates());
@@ -24,19 +23,6 @@ class BleCubit extends Cubit<BleStates> {
   String deviceName = 'Smart Lock FP1 Test';
 
   List<int> valueInDevice = [];
-
-  void navigateToLockAndUnlock({required BuildContext context}) {
-    Future.delayed(const Duration(seconds: 5)).then((value) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) {
-            return const LockAndUnlock();
-          },
-        ),
-      );
-    });
-  }
 
   Future<void> requestLocationPermission(
       {required BuildContext context}) async {
@@ -80,8 +66,6 @@ class BleCubit extends Cubit<BleStates> {
       case SuccessFullyConnected():
         isConnected = true;
         emit(SuccessFullyConnected());
-
-        navigateToLockAndUnlock(context: context);
 
         break;
       default:
@@ -136,6 +120,7 @@ class BleCubit extends Cubit<BleStates> {
     required Uuid characteristicId,
   }) async {
     Logger().i('Reading ..');
+    Logger().i(state);
     try {
       Logger().i('readCharacteristic');
       List<int> valueInDevice = await _ble.readCharacteristic(
