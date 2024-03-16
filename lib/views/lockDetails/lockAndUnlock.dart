@@ -5,13 +5,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
-import 'package:smart_lock_app/components/lockStatus/lockDisconnect.dart';
-import 'package:smart_lock_app/components/lockStatus/lockOpened.dart';
+import 'package:smart_lock_app/components/lockStatus/lockClosed.dart';
 import 'package:smart_lock_app/controller/cubits/bleCubit/bleCubit.dart';
 import 'package:smart_lock_app/controller/cubits/bleCubit/bleStates.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockCubit.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockStates.dart';
-import 'package:smart_lock_app/loading.dart';
 
 class LockAndUnlock extends StatefulWidget {
   const LockAndUnlock({super.key});
@@ -24,40 +22,26 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
   bool isLoading = false;
   final flutterBle = FlutterReactiveBle();
 
-  void _toggleLockState() {
-    setState(() {
-      isLoading = true;
-
-      // Simulate some asynchronous operation
-      Future.delayed(const Duration(milliseconds: 500), () {
-        // BlocProvider.of<LockCubit>(context).toggleLock();
-        isLoading = false;
-      });
-    });
-  }
-
   @override
-  initState() {
-    BleStates state;
-    final ble = BlocProvider.of<BleCubit>(context);
-    state = SuccessFullyConnected();
+  // initState() {
+  //   BleStates state;
+  //   final ble = BlocProvider.of<BleCubit>(context);
 
-    super.initState();
-    ble.requestLocationPermission();
-    ble.scanSub =
-        flutterBle.scanForDevices(withServices: []).listen(ble.scanForDevice);
-    if (BlocProvider.of<LockCubit>(context).isConnected == true) {
-      BlocProvider.of<LockCubit>(context).batteryValues();
-    } else {
-      print('asd');
-      // BlocProvider.of<LockCubit>(context).batteryValues();
-    }
-  }
+  //   super.initState();
+  //   ble.requestLocationPermission();
+  //   ble.scanSub =
+  //       flutterBle.scanForDevices(withServices: []).listen(ble.scanForDevice);
+  //   if (BlocProvider.of<LockCubit>(context).bleCubit.isConnected == true) {
+  //     BlocProvider.of<LockCubit>(context).batteryValues();
+  //   } else {
+  //     print('asd');
+  //     // BlocProvider.of<LockCubit>(context).batteryValues();
+  //   }
+  // }
 
   @override
   void dispose() {
     final ble = BlocProvider.of<BleCubit>(context);
-
     ble.notifySub?.cancel();
     ble.connectSub?.cancel();
     ble.scanSub?.cancel();
@@ -66,36 +50,22 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LockCubit, LockStates>(builder: (context, state) {
+    return BlocBuilder<LockCubit, LockStates>(builder: (ctx, state) {
+      final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
       LockCubit cubit = BlocProvider.of<LockCubit>(context);
 
-      Widget lockWidget;
+      // Widget lockWidget;
 
-      if (cubit.isConnected == true) {
-        lockWidget = const LockOpen();
-      } else {
-        lockWidget = const LockDisconnected();
-      }
-      // switch (cubit) {
-      //   case cubit.isDoorOpen:
-      //     lockWidget = LockClosed();
-      //     break;
-      //   case UnlockedSuccessfully():
-      //     lockWidget = LockOpen();
-      //     break;
-      //   case BleConnectionFailed():
-      //     lockWidget = LockDisconnected();
-      //   case DoorIsOpen():
-      //     lockWidget = LockOpen();
-      //     break;
-      //   case DoorIsClosed():
-      //     lockWidget = LockClosed();
-      //   default:
-      //     lockWidget = LockOpen(); // Handle other cases if necessary
+      // if (cubit.bleCubit.isConnected == true) {
+      //   lockWidget = const LockOpen();
+      // } else {
+      //   lockWidget = const LockDisconnected();
       // }
 
       return SafeArea(
           child: Scaffold(
+        key: scaffoldKey,
         body: Column(
           children: [
             Stack(
@@ -258,7 +228,10 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
                     ? MainAxisAlignment.end
                     : MainAxisAlignment.spaceBetween,
                 children: [
-                  if (BlocProvider.of<LockCubit>(context).isConnected == true)
+                  if (BlocProvider.of<LockCubit>(context)
+                          .bleCubit
+                          .isConnected ==
+                      true)
                     Padding(
                       padding: EdgeInsets.only(left: 16.w),
                       child: Row(
@@ -298,7 +271,10 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
                       left: 200.w,
                     ),
                     child: SvgPicture.asset(
-                      BlocProvider.of<LockCubit>(context).isConnected == false
+                      BlocProvider.of<LockCubit>(context)
+                                  .bleCubit
+                                  .isConnected ==
+                              false
                           ? 'assets/Icons/wifi-grey.svg'
                           : 'assets/Icons/wifi-blue.svg',
                       height: 20.h,
@@ -309,7 +285,8 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
                     width: 8.w,
                   ),
                   SvgPicture.asset(
-                    BlocProvider.of<LockCubit>(context).isConnected == false
+                    BlocProvider.of<LockCubit>(context).bleCubit.isConnected ==
+                            false
                         ? 'assets/Icons/bluetooth-grey.svg'
                         : 'assets/Icons/bluetooth.svg',
                     height: 16.13.h,
@@ -322,29 +299,33 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
               height: 64.h,
             ),
             GestureDetector(
-                onLongPress: () {
-                  if (state is ScanningDevice) {
-                    Logger().i("Still Scanning");
-                  } else {
-                    // Read The battery Values
-                    BlocProvider.of<LockCubit>(context).batteryValues();
-                    // Lock and Unlock
-                    BlocProvider.of<LockCubit>(context).lockControl(data: '2');
-                    // Check if the door is opened
-                    BlocProvider.of<LockCubit>(context).isOpen();
-                    // Load the lockStateCharacteristics
-                    BlocProvider.of<LockCubit>(context)
-                        .lockStateCharacteristics();
-                    print(cubit.isDoorOpen);
-                    print(cubit.isConnected);
-                  }
-
-                  // _toggleLockState();
-                },
-                child: isLoading ? const Loading() : lockWidget),
-            Text(BlocProvider.of<LockCubit>(context).isLocked.toString()),
-            Text(cubit.batteryValue.toString()),
-            Text(BlocProvider.of<LockCubit>(context).isConnected.toString())
+              onLongPress: () {
+                if (state is ScanningDevice) {
+                  Logger().i("Still Scanning");
+                } else {
+                  // Read The battery Values
+                  BlocProvider.of<LockCubit>(context).batteryValues();
+                  // Lock and Unlock
+                  BlocProvider.of<LockCubit>(context).lockControl(data: '2');
+                  // Check if the door is opened
+                  BlocProvider.of<LockCubit>(context).isOpen();
+                  // Load the lockStateCharacteristics
+                  BlocProvider.of<LockCubit>(context)
+                      .lockStateCharacteristics();
+                  print(cubit.isDoorOpen);
+                  print(cubit.bleCubit.isConnected);
+                }
+                // _toggleLockState();
+              },
+              // child: isLoading ? const Loading() : lockWidget),
+              child: const LockClosed(),
+              // Text(BlocProvider.of<LockCubit>(context).isLocked.toString()),
+              // Text(cubit.batteryValue.toString()),
+              // Text(BlocProvider.of<LockCubit>(context)
+              //     .bleCubit
+              //     .isConnected
+              //     .toString()
+            )
           ],
         ),
       ));
