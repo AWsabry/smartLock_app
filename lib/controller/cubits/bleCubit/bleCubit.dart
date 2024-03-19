@@ -61,11 +61,6 @@ class BleCubit extends Cubit<BleStates> {
     switch (state) {
       // In case connected Stop Scanning
       case SuccessFullyFoundDevice():
-        _ble.connectToDevice(
-          id: deviceId,
-        );
-        emit(SuccessFullyFoundDevice());
-        break;
       case SuccessFullyConnected():
         isConnected = true;
         emit(SuccessFullyConnected());
@@ -78,8 +73,13 @@ class BleCubit extends Cubit<BleStates> {
           _found = true;
           Logger().i(_found);
           try {
-            connectDevice(deviceId: deviceId);
-            // Logger().i('Device Connected SuccessFully');
+            await Future.delayed(const Duration(seconds: 2)).then(
+              (value) {
+                connectDevice(deviceId: deviceId);
+                Logger().i('Device Connected SuccessFully');
+              },
+            );
+
             // emit(SuccessFullyConnected());
           } catch (e) {
             Logger().e(e);
@@ -97,14 +97,14 @@ class BleCubit extends Cubit<BleStates> {
       id: deviceId,
     )
         .listen((update) {
-      if (update.connectionState == DeviceConnectionState.connected) {
-        Logger().d('Connected');
-        isConnected = true;
-        emit(SuccessFullyConnected());
-      } else if (update.connectionState == DeviceConnectionState.connecting) {
+      if (update.connectionState == DeviceConnectionState.connecting) {
         Logger().i('Connecting ...');
         isConnected = false;
         emit(SuccessFullyFoundDevice());
+      } else if (update.connectionState == DeviceConnectionState.connected) {
+        Logger().d('Connected');
+        isConnected = true;
+        emit(SuccessFullyConnected());
       } else if (update.failure == true) {
         Logger().i('Failure');
       } else {
