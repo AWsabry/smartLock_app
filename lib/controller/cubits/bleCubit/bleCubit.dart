@@ -31,12 +31,18 @@ class BleCubit extends Cubit<BleStates> {
     var status = await Permission.location.request();
 
     // Permission granted, proceed with BLE scanning
-    if (status.isGranted) {
+    if (status.isGranted && bleConnect.isGranted) {
+      emit(ScanningDevice());
       if (state is SuccessFullyFoundDevice || state is SuccessFullyConnected) {
       } else {
         scanSub = _ble.scanForDevices(
-          withServices: [],
-          scanMode: ScanMode.lowLatency,
+          withServices: [
+            Uuid.parse('AAAA'),
+            Uuid.parse('BBBB'),
+            Uuid.parse('CCCC'),
+            Uuid.parse('DDDD')
+          ],
+          scanMode: ScanMode.lowPower,
         ).listen((device) {
           scanForDevice(device: device, context: context);
         });
@@ -55,62 +61,75 @@ class BleCubit extends Cubit<BleStates> {
     required DiscoveredDevice device,
     required BuildContext context,
   }) async {
-    // log('State: ${state.toString()}');
-
     // Scanning for device
     switch (state) {
       // In case connected Stop Scanning
       case SuccessFullyFoundDevice():
+        debugPrint(deviceId);
+        await connectDevice(deviceId: deviceId);
+
       case SuccessFullyConnected():
-        isConnected = true;
-        emit(SuccessFullyConnected());
         break;
+      // isConnected = true;
+      // emit(SuccessFullyConnected());
+
       default:
         emit(ScanningDevice());
-
         Logger().i('Scanning For Device');
         if (device.name == deviceName || device.id == deviceId) {
           _found = true;
           Logger().i(_found);
           try {
-            await Future.delayed(const Duration(seconds: 2)).then(
-              (value) {
-                connectDevice(deviceId: deviceId);
-                Logger().i('Device Connected SuccessFully');
-              },
-            );
-
-            // emit(SuccessFullyConnected());
+            emit(SuccessFullyFoundDevice());
           } catch (e) {
             Logger().e(e);
             emit(FailedToFindDevice());
           }
         }
-
-        break; // Handle other cases if necessary
+        break;
     }
   }
 
-  Future<void> connectDevice({required String deviceId}) async {
+  Future<StreamSubscription<ConnectionStateUpdate>?> connectDevice(
+      {required String deviceId}) async {
     connectSub = _ble
         .connectToDevice(
-      id: deviceId,
-    )
+            id: deviceId, connectionTimeout: const Duration(seconds: 10))
         .listen((update) {
+      Logger().i(update);
+
       if (update.connectionState == DeviceConnectionState.connecting) {
         Logger().i('Connecting ...');
-        isConnected = false;
-        emit(SuccessFullyFoundDevice());
+
+        // isConnected = false;
+        // emit(SuccessFullyFoundDevice());
       } else if (update.connectionState == DeviceConnectionState.connected) {
+        Logger().i(update);
         Logger().d('Connected');
         isConnected = true;
         emit(SuccessFullyConnected());
-      } else if (update.failure == true) {
-        Logger().i('Failure');
+      } else if (update.connectionState == DeviceConnectionState.disconnected) {
+        Logger().i('disconnected');
+        connectDevice(deviceId: deviceId);
       } else {
+        Logger().i(update);
+        // Logger().i("ELSE");
         isConnected = false;
-        emit(ScanningDevice());
+        // emit(ScanningDevice());
       }
+    }, onError: (Object error) {
+      Logger().i(error);
+      // Handle a possible error
+    });
+    return null;
+  }
+
+  testConnecting() {
+    _ble
+        .connectToDevice(
+            id: deviceId, connectionTimeout: const Duration(seconds: 10))
+        .listen((event) {
+      Logger().i(event);
     });
   }
 

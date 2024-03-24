@@ -17,7 +17,7 @@ class LockDisconnected extends StatelessWidget {
           onLongPress: () async {
             final lockActions =
                 LockActions(BlocProvider.of<LockCubit>(context));
-            await lockActions.lockAction(
+            await lockActions.unLockAction(
               context,
             );
           },
