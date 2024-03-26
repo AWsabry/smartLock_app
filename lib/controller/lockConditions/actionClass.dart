@@ -10,7 +10,7 @@ class LockActions {
     context,
   ) async {
     try {
-      lockCubit.lockControl(context, data: '2');
+      lockCubit.lockControl(context, data: '02');
       Logger().i('Door Locked');
     } catch (e) {
       Logger().e('Error in Locking Function');
@@ -23,7 +23,7 @@ class LockActions {
     context,
   ) async {
     try {
-      lockCubit.lockControl(context, data: '3');
+      lockCubit.lockControl(context, data: '03');
     } catch (e) {
       Logger().e('Error in Unlocking Function');
       Logger().e(e);

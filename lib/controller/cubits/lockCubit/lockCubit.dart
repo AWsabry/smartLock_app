@@ -167,12 +167,12 @@ class LockCubit extends Cubit<LockStates> {
       Logger().i("Write successful");
       emit(WriteSuccessfully());
       switch (data) {
-        case '2':
+        case '02':
           emit(LockedSuccessfully());
           isLocked == true;
           Logger().i("isLocked + $isLocked");
           break;
-        case '3':
+        case '03':
           emit(UnlockedSuccessfully());
           isLocked == false;
           Logger().i("isLocked + $isLocked");

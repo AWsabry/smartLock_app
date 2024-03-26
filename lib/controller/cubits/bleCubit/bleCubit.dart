@@ -68,7 +68,6 @@ class BleCubit extends Cubit<BleStates> {
     switch (state) {
       // In case connected Stop Scanning
       case SuccessFullyFoundDevice():
-        debugPrint(deviceId);
         await connectDevice(deviceId: deviceId);
 
       case SuccessFullyConnected():
@@ -176,6 +175,7 @@ class BleCubit extends Cubit<BleStates> {
 
     // Convert the data to bytes before writing
     List<int> dataBytes = utf8.encode(data);
+    Logger().d(dataBytes);
     _ble
         .writeCharacteristicWithoutResponse(characteristic, value: dataBytes)
         .then(
