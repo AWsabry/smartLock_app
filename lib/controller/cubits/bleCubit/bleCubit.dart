@@ -18,13 +18,14 @@ class BleCubit extends Cubit<BleStates> {
   StreamSubscription<ConnectionStateUpdate>? connectSub;
   StreamSubscription<List<int>>? notifySub;
 
-  String deviceId = '40:4C:CA:41:2A:66';
+  String deviceId = '40:4C:CA:41:27:C6';
   String deviceName = 'Smart Lock FP1 Test';
 
   List<int> valueInDevice = [];
 
   Future<void> requestLocationPermission(
       {required BuildContext context}) async {
+    Logger().i('Entered');
     PermissionStatus locationPermission = await Permission.location.request();
     PermissionStatus bleScan = await Permission.bluetoothScan.request();
     PermissionStatus bleConnect = await Permission.bluetoothConnect.request();
@@ -32,17 +33,19 @@ class BleCubit extends Cubit<BleStates> {
 
     // Permission granted, proceed with BLE scanning
     if (status.isGranted && bleConnect.isGranted) {
+      Logger().i('Granted');
       emit(ScanningDevice());
       if (state is SuccessFullyFoundDevice || state is SuccessFullyConnected) {
       } else {
+        Logger().i('ScanningDevice in the else');
         scanSub = _ble.scanForDevices(
           withServices: [
-            Uuid.parse('AAAA'),
-            Uuid.parse('BBBB'),
-            Uuid.parse('CCCC'),
-            Uuid.parse('DDDD')
+            // Uuid.parse('AAAA'),
+            // Uuid.parse('BBBB'),
+            // Uuid.parse('CCCC'),
+            // Uuid.parse('DDDD')
           ],
-          scanMode: ScanMode.lowPower,
+          scanMode: ScanMode.lowLatency,
         ).listen((device) {
           scanForDevice(device: device, context: context);
         });
@@ -69,14 +72,19 @@ class BleCubit extends Cubit<BleStates> {
         await connectDevice(deviceId: deviceId);
 
       case SuccessFullyConnected():
+        // LockCubit cubit = BlocProvider.of<LockCubit>(context);
+        // cubit.readLockStateValues(context);
+        // cubit.batteryValues(context);
+        // Logger().f("Connected");
         break;
+
       // isConnected = true;
       // emit(SuccessFullyConnected());
 
       default:
         emit(ScanningDevice());
         Logger().i('Scanning For Device');
-        if (device.name == deviceName || device.id == deviceId) {
+        if (device.name == deviceName && device.id == deviceId) {
           _found = true;
           Logger().i(_found);
           try {
@@ -86,7 +94,6 @@ class BleCubit extends Cubit<BleStates> {
             emit(FailedToFindDevice());
           }
         }
-        break;
     }
   }
 

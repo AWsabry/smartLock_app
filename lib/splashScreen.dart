@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:smart_lock_app/controller/cubits/bleCubit/bleCubit.dart';
 import 'package:smart_lock_app/controller/cubits/bleCubit/bleStates.dart';
+import 'package:smart_lock_app/views/lockDetails/lockAndUnlock.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -57,7 +58,10 @@ class _SplashScreenState extends State<SplashScreen>
           children: [
             ElevatedButton(
                 onPressed: () async {
-                  await BleCubit.get(context).testConnecting();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LockAndUnlock()));
                 },
                 child: const Text("Press")),
             Center(
