@@ -26,19 +26,6 @@ class _SplashScreenState extends State<SplashScreen>
       Logger().i("Device Found");
     } else if (bleCubit.state is SuccessFullyConnected) {
       bleCubit.isConnected = true;
-
-      // Future.delayed(const Duration(seconds: 3)).then(
-      //   (value) {
-      //     Navigator.push(
-      //       context,
-      //       MaterialPageRoute(
-      //         builder: (BuildContext context) {
-      //           return const LockAndUnlock();
-      //         },
-      //       ),
-      //     );
-      //   },
-      // );
     } else {
       bleCubit.requestLocationPermission(context: context);
       bleCubit.isConnected = false;

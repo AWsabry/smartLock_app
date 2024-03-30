@@ -43,14 +43,5 @@ abstract class SmartLockAppConstants {
       'body':
           "Rotate the thumbnuts until the door is just locked.\n\nIf your lock has multiple locked position, just stop after the first position.",
     },
-    {
-      'id': 6,
-      'body':
-          "Keep the door slightly ajar (just enough so that the lock or latch is more in the door frame)",
-    },
-    {
-      'id': 7,
-      'body': "Now close the door.",
-    },
   ];
 }

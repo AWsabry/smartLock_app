@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -165,7 +164,7 @@ class BleCubit extends Cubit<BleStates> {
   void writeDataToBle({
     required Uuid serviceId,
     required Uuid characteristicId,
-    required String data,
+    required int data,
   }) {
     final characteristic = QualifiedCharacteristic(
       deviceId: deviceId.toString(),
@@ -173,12 +172,7 @@ class BleCubit extends Cubit<BleStates> {
       characteristicId: characteristicId,
     );
 
-    // Convert the data to bytes before writing
-    List<int> dataBytes = utf8.encode(data);
-    Logger().d(dataBytes);
-    _ble
-        .writeCharacteristicWithoutResponse(characteristic, value: dataBytes)
-        .then(
+    _ble.writeCharacteristicWithoutResponse(characteristic, value: [data]).then(
       (_) {
         Logger().d("Write successful");
       },

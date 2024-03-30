@@ -10,7 +10,7 @@ class LockActions {
     context,
   ) async {
     try {
-      lockCubit.lockControl(context, data: '02');
+      lockCubit.lockControl(context, data: 2);
       Logger().i('Door Locked');
     } catch (e) {
       Logger().e('Error in Locking Function');
@@ -23,7 +23,7 @@ class LockActions {
     context,
   ) async {
     try {
-      lockCubit.lockControl(context, data: '03');
+      lockCubit.lockControl(context, data: 3);
     } catch (e) {
       Logger().e('Error in Unlocking Function');
       Logger().e(e);
@@ -34,7 +34,7 @@ class LockActions {
     context,
   ) async {
     try {
-      lockCubit.lockingMechanismCalibration(context, data: '3');
+      lockCubit.lockingMechanismCalibration(context, data: 3);
     } catch (e) {
       Logger().e('Error in Unlocking Function');
       Logger().e(e);
@@ -45,7 +45,7 @@ class LockActions {
     context,
   ) async {
     try {
-      lockCubit.lockingMechanismCalibration(context, data: '2');
+      lockCubit.lockingMechanismCalibration(context, data: 2);
     } catch (e) {
       Logger().e('Error in Unlocking Function');
       Logger().e(e);
@@ -56,7 +56,7 @@ class LockActions {
     context,
   ) async {
     try {
-      lockCubit.lockingMechanismCalibration(context, data: '4');
+      lockCubit.lockingMechanismCalibration(context, data: 4);
     } catch (e) {
       Logger().e('Error in Unlocking Function');
       Logger().e(e);
@@ -67,7 +67,7 @@ class LockActions {
     context,
   ) async {
     try {
-      lockCubit.lockingMechanismCalibration(context, data: '5');
+      lockCubit.lockingMechanismCalibration(context, data: 5);
     } catch (e) {
       Logger().e('Error in Unlocking Function');
       Logger().e(e);

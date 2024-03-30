@@ -154,7 +154,7 @@ class LockCubit extends Cubit<LockStates> {
   }
 
   // Lock & Unlock
-  Future<void> lockControl(context, {required String data}) async {
+  Future<void> lockControl(context, {required int data}) async {
     try {
       var bleCubit = BleCubit.get(context);
 
@@ -167,12 +167,12 @@ class LockCubit extends Cubit<LockStates> {
       Logger().i("Write successful");
       emit(WriteSuccessfully());
       switch (data) {
-        case '02':
+        case 2:
           emit(LockedSuccessfully());
           isLocked == true;
           Logger().i("isLocked + $isLocked");
           break;
-        case '03':
+        case 3:
           emit(UnlockedSuccessfully());
           isLocked == false;
           Logger().i("isLocked + $isLocked");
@@ -188,7 +188,7 @@ class LockCubit extends Cubit<LockStates> {
   }
 
   // Read the battery Values
-  Future<void> batteryValues(context) async {
+  Future<bool> batteryValues(context) async {
     if (await checkConnection(context)) {
       try {
         var bleCubit = BleCubit.get(context);
@@ -202,14 +202,17 @@ class LockCubit extends Cubit<LockStates> {
         batteryValue = value;
         Logger().i("Battery Value is $batteryValue");
         emit(SuccessReadBatteryValues());
+        return true;
       } catch (e) {
         Logger().e('Error in the Try of batteryValues Function');
         Logger().e(e);
         emit(FailedToReadBatteryValues());
+        return false;
       }
     } else {
       Logger().e('Connection Failed');
       emit(FailedToReadBatteryValues());
+      return false;
     }
   }
 
@@ -221,7 +224,7 @@ class LockCubit extends Cubit<LockStates> {
       bleCubit.writeDataToBle(
         serviceId: Uuid.parse('DDDD'),
         characteristicId: Uuid.parse('DD01'),
-        data: '1',
+        data: 1,
       );
       bleCubit.isConnected = true;
       emit(WriteSuccessfully());
@@ -261,7 +264,7 @@ class LockCubit extends Cubit<LockStates> {
   }
 
   // Function to Calibrate the lock
-  Future lockingMechanismCalibration(context, {required String data}) async {
+  Future lockingMechanismCalibration(context, {required int data}) async {
     // calibrationCharacteristic(context);
     try {
       var bleCubit = BleCubit.get(context);
@@ -274,25 +277,25 @@ class LockCubit extends Cubit<LockStates> {
       bleCubit.isConnected = true;
       emit(WriteSuccessfully());
       switch (data) {
-        case '2':
+        case 2:
           Logger().i(
               'State Written is ${lockStateList[0]} with value $lockStateValue');
-          data = lockStateValue.toString();
+          data = lockStateValue;
           return lockStateList[0];
-        case '3':
+        case 3:
           Logger().i(
               'State Written is ${lockStateList[1]} with value $lockStateValue');
-          data = lockStateValue.toString();
+          data = lockStateValue;
           return lockStateList[1];
-        case '4':
+        case 4:
           Logger().i(
               'State Written is ${lockStateList[2]} with value $lockStateValue');
-          data = lockStateValue.toString();
+          data = lockStateValue;
           return lockStateList[2];
-        case '5':
+        case 5:
           Logger().i(
               'State Written is ${lockStateList[3]} with value $lockStateValue');
-          data = lockStateValue.toString();
+          data = lockStateValue;
           return lockStateList[3];
         default:
           break;
