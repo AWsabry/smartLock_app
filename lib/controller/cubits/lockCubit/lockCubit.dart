@@ -173,7 +173,7 @@ class LockCubit extends Cubit<LockStates> {
 
           return const UnlockClosed();
         default:
-          return const LockDisconnected();
+          return const UnlockClosed();
       }
     } else {
       return const LockDisconnected();
