@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart' hide Logger;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:logger/logger.dart';
 import 'package:smart_lock_app/components/buttons/SecondaryButton.dart';
 import 'package:smart_lock_app/components/buttons/primaryButton.dart';
+import 'package:smart_lock_app/controller/cubits/bleCubit/bleCubit.dart';
+import 'package:smart_lock_app/controller/cubits/bleCubit/bleStates.dart';
 import 'package:smart_lock_app/views/auth/loginScreen.dart';
 import 'package:smart_lock_app/views/calibration/calibrationScreen.dart';
 
@@ -17,13 +20,19 @@ class _LandingScreenState extends State<LandingScreen> {
   final flutterBle = FlutterReactiveBle();
 
   @override
-  // initState() {
-  //   final ble = BlocProvider.of<BleCubit>(context);
-  //   super.initState();
-  //   ble.requestLocationPermission();
-  //   ble.scanSub =
-  //       flutterBle.scanForDevices(withServices: []).listen(ble.scanForDevice);
-  // }
+  void initState() {
+    super.initState();
+    final bleCubit = BleCubit.get(context);
+    if (bleCubit.state is SuccessFullyFoundDevice) {
+      bleCubit.isConnected = false;
+      Logger().i("Device Found");
+    } else if (bleCubit.state is SuccessFullyConnected) {
+      bleCubit.isConnected = true;
+    } else {
+      bleCubit.requestLocationPermission(context: context);
+      bleCubit.isConnected = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

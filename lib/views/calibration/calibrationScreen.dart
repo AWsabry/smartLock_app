@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_lock_app/components/CustomAppBar.dart';
 import 'package:smart_lock_app/components/buttons/calibrationPrimaryButton.dart';
 import 'package:smart_lock_app/components/buttons/calibrationSecondaryButton.dart';
 import 'package:smart_lock_app/constants/constants.dart';
+import 'package:smart_lock_app/controller/cubits/lockCubit/lockCubit.dart';
 import 'package:smart_lock_app/views/calibration/calibrationSuccessScreen.dart';
 
 class CalibrationScreen extends StatefulWidget {
@@ -18,17 +20,41 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
   int currentStepIndex = 0;
 
   void goToNextStep() {
+    LockCubit cubit = BlocProvider.of<LockCubit>(context);
     setState(() {
       if (currentStepIndex < SmartLockAppConstants.calibration.length - 1) {
         currentStepIndex++;
-      } else if (currentStepIndex + 1 ==
-          SmartLockAppConstants.calibration.length) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const CalibrationSuccess(),
-          ),
-        );
+        print("current Step$currentStepIndex");
+        if (currentStepIndex == 1) {
+          cubit.startCalibration(context);
+          print("Calibration Started");
+        } else if (currentStepIndex == 2) {
+          print("Calibration CULP");
+          cubit.lockingMechanismCalibration(context, data: 3);
+        } else if (currentStepIndex == 3) {
+          print("Calibration CLP");
+
+          cubit.lockingMechanismCalibration(context, data: 2);
+        } else if (currentStepIndex == 4) {
+          print("Calibration JULP");
+
+          cubit.lockingMechanismCalibration(context, data: 5);
+        } else if (currentStepIndex + 1 ==
+            SmartLockAppConstants.calibration.length) {
+          print("Calibration JLP");
+          cubit.lockingMechanismCalibration(context, data: 4);
+          Future.delayed(const Duration(seconds: 5)).then(
+            (value) {
+              cubit.calibrationCharacteristic(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CalibrationSuccess(),
+                ),
+              );
+            },
+          );
+        }
       } else {
         return;
       }
@@ -163,7 +189,7 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
                           top: 2.h,
                         ),
                         child: Text(
-                          "7",
+                          "6",
                           textAlign: TextAlign.center,
                           style: GoogleFonts.inter(
                             textStyle: TextStyle(

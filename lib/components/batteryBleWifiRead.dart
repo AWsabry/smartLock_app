@@ -38,17 +38,30 @@ class _BatteryBleReadState extends State<BatteryBleRead> {
                       height: 24.h,
                       width: 24.w,
                     ),
-                    Text(
-                      cubit.batteryValue.toString(),
-                      textAlign: TextAlign.left,
-                      style: GoogleFonts.nunitoSans(
-                        textStyle: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 10.sp,
-                          color: const Color.fromRGBO(30, 64, 175, 1),
+                    if (cubit.batteryValue != null)
+                      Text(
+                        cubit.batteryValue.toString(),
+                        textAlign: TextAlign.left,
+                        style: GoogleFonts.nunitoSans(
+                          textStyle: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 10.sp,
+                            color: const Color.fromRGBO(30, 64, 175, 1),
+                          ),
                         ),
                       ),
-                    ),
+                    if (cubit.batteryValue == null)
+                      Text(
+                        "Loading",
+                        textAlign: TextAlign.left,
+                        style: GoogleFonts.nunitoSans(
+                          textStyle: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 5.sp,
+                            color: const Color.fromRGBO(30, 64, 175, 1),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),

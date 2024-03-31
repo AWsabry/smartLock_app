@@ -97,19 +97,26 @@ class LockCubit extends Cubit<LockStates> {
         bleCubit.isConnected = true;
         characteristicsValues = value;
         Logger().i("characteristicsValues Value is $characteristicsValues");
-        emit(ReadTheLockStateCharacteristicsSuccessfully());
+        // emit(ReadTheLockStateCharacteristicsSuccessfully());
         switch (characteristicsValues) {
           case 2:
             lockStateValue = 2;
+            emit(LockedSuccessfully());
             return lockStateValue;
           case 3:
             lockStateValue = 3;
+            // CULP
+            emit(UnlockedSuccessfully());
             return lockStateValue;
           case 4:
             lockStateValue = 4;
+            // Ajar Locked Value but for now Locked
+            emit(LockedSuccessfully());
             return lockStateValue;
           case 5:
             lockStateValue = 5;
+            // Ajar Unlocked Value but for now unlocked
+            emit(UnlockedSuccessfully());
             return lockStateValue;
           default:
             return lockStateValue = 0;
@@ -117,7 +124,7 @@ class LockCubit extends Cubit<LockStates> {
       } catch (e) {
         Logger().e('Error in the Try of readLockStateValues Function');
         Logger().e(e);
-        emit(FailedToReadTheLockStateCharacteristics());
+        // emit(FailedToReadTheLockStateCharacteristics());
         return 0; // Return a default value to indicate error
       }
     } else {
@@ -128,6 +135,9 @@ class LockCubit extends Cubit<LockStates> {
   }
 
   // Function to render the Future<Widget>
+
+  // ____ Will be Used to check the current state and render to the Future Function in the lock and unlock Screen Line 207 in the Future Widget__ //
+
   Future<Widget> renderLockStateWidget(BuildContext context) async {
     if (await checkConnection(context)) {
       switch (lockStateValue) {
@@ -147,6 +157,23 @@ class LockCubit extends Cubit<LockStates> {
           return const UnlockOpen();
         default:
           return const Text("Error in Connections");
+      }
+    } else {
+      return const LockDisconnected();
+    }
+  }
+
+  Future<Widget> renderLockAndUnlockWidgets(context) async {
+    if (await checkConnection(context)) {
+      switch (state) {
+        case LockedSuccessfully():
+          return const LockClosed();
+        case UnlockedSuccessfully():
+          Logger().i('State is ${lockStateList[0]} with value $lockStateValue');
+
+          return const UnlockClosed();
+        default:
+          return const LockDisconnected();
       }
     } else {
       return const LockDisconnected();
@@ -201,23 +228,24 @@ class LockCubit extends Cubit<LockStates> {
 
         batteryValue = value;
         Logger().i("Battery Value is $batteryValue");
-        emit(SuccessReadBatteryValues());
+        // emit(SuccessReadBatteryValues());
         return true;
       } catch (e) {
         Logger().e('Error in the Try of batteryValues Function');
         Logger().e(e);
-        emit(FailedToReadBatteryValues());
+        // emit(FailedToReadBatteryValues());
         return false;
       }
     } else {
       Logger().e('Connection Failed');
-      emit(FailedToReadBatteryValues());
+      // emit(FailedToReadBatteryValues());
       return false;
     }
   }
 
   // Permission To start Calibrating
-  Future<void> calibrationControl(context) async {
+  Future<void> startCalibration(context) async {
+    Logger().e('Calibration Started');
     try {
       var bleCubit = BleCubit.get(context);
 
@@ -237,6 +265,7 @@ class LockCubit extends Cubit<LockStates> {
 
   // Calibrating Status
   Future calibrationCharacteristic(context) async {
+    print("Calibration Response");
     try {
       var bleCubit = BleCubit.get(context);
 
@@ -252,6 +281,7 @@ class LockCubit extends Cubit<LockStates> {
           calibrationSuccess = true;
           return true;
         case 3:
+          calibrationSuccess = false;
           return false;
         case 4:
           return 'in Progress';
@@ -261,6 +291,7 @@ class LockCubit extends Cubit<LockStates> {
     } catch (e) {
       Logger().e(e);
     }
+    Logger().i('State Written is $calibrationSuccess');
   }
 
   // Function to Calibrate the lock
@@ -278,24 +309,16 @@ class LockCubit extends Cubit<LockStates> {
       emit(WriteSuccessfully());
       switch (data) {
         case 2:
-          Logger().i(
-              'State Written is ${lockStateList[0]} with value $lockStateValue');
-          data = lockStateValue;
+          Logger().i('State Written is ${lockStateList[0]} with value $data');
           return lockStateList[0];
         case 3:
-          Logger().i(
-              'State Written is ${lockStateList[1]} with value $lockStateValue');
-          data = lockStateValue;
+          Logger().i('State Written is ${lockStateList[1]} with value $data');
           return lockStateList[1];
         case 4:
-          Logger().i(
-              'State Written is ${lockStateList[2]} with value $lockStateValue');
-          data = lockStateValue;
+          Logger().i('State Written is ${lockStateList[2]} with value $data');
           return lockStateList[2];
         case 5:
-          Logger().i(
-              'State Written is ${lockStateList[3]} with value $lockStateValue');
-          data = lockStateValue;
+          Logger().i('State Written is ${lockStateList[3]} with value $data');
           return lockStateList[3];
         default:
           break;

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 import 'package:smart_lock_app/controller/cubits/bleCubit/bleCubit.dart';
 import 'package:smart_lock_app/controller/cubits/bleCubit/bleStates.dart';
 import 'package:smart_lock_app/views/lockDetails/lockAndUnlock.dart';
@@ -12,23 +11,22 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with TickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen> {
   // final _ble = FlutterReactiveBle();
 
   @override
   void initState() {
     super.initState();
     final bleCubit = BleCubit.get(context);
-
-    if (bleCubit.state is SuccessFullyFoundDevice) {
-      bleCubit.isConnected = false;
-      Logger().i("Device Found");
-    } else if (bleCubit.state is SuccessFullyConnected) {
-      bleCubit.isConnected = true;
-    } else {
-      bleCubit.requestLocationPermission(context: context);
-      bleCubit.isConnected = false;
+    if (bleCubit.isConnected) {
+      Future.delayed(const Duration(seconds: 3)).then(
+        (value) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const LockAndUnlock()),
+          );
+        },
+      );
     }
   }
 

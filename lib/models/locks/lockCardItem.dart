@@ -4,7 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_lock_app/models/locks/lockModel.dart';
-import 'package:smart_lock_app/splashScreen.dart';
+// import 'package:smart_lock_app/splashScreen.dart';
+import 'package:smart_lock_app/views/lockDetails/lockAndUnlock.dart';
 
 class LockCardItem extends StatelessWidget {
   const LockCardItem({
@@ -22,7 +23,7 @@ class LockCardItem extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const SplashScreen(),
+              builder: (context) => const LockAndUnlock(),
             ));
       },
       child: Container(

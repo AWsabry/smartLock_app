@@ -33,17 +33,11 @@ class BleCubit extends Cubit<BleStates> {
     // Permission granted, proceed with BLE scanning
     if (status.isGranted && bleConnect.isGranted) {
       Logger().i('Granted');
-      emit(ScanningDevice());
-      if (state is SuccessFullyFoundDevice || state is SuccessFullyConnected) {
+      if (state is SuccessFullyFoundDevice) {
+      } else if (state is SuccessFullyConnected) {
       } else {
-        Logger().i('ScanningDevice in the else');
         scanSub = _ble.scanForDevices(
-          withServices: [
-            // Uuid.parse('AAAA'),
-            // Uuid.parse('BBBB'),
-            // Uuid.parse('CCCC'),
-            // Uuid.parse('DDDD')
-          ],
+          withServices: [],
           scanMode: ScanMode.lowLatency,
         ).listen((device) {
           scanForDevice(device: device, context: context);
@@ -70,18 +64,12 @@ class BleCubit extends Cubit<BleStates> {
         await connectDevice(deviceId: deviceId);
 
       case SuccessFullyConnected():
-        // LockCubit cubit = BlocProvider.of<LockCubit>(context);
-        // cubit.readLockStateValues(context);
-        // cubit.batteryValues(context);
-        // Logger().f("Connected");
         break;
-
-      // isConnected = true;
-      // emit(SuccessFullyConnected());
 
       default:
         emit(ScanningDevice());
         Logger().i('Scanning For Device');
+
         if (device.name == deviceName && device.id == deviceId) {
           _found = true;
           Logger().i(_found);
@@ -91,6 +79,7 @@ class BleCubit extends Cubit<BleStates> {
             Logger().e(e);
             emit(FailedToFindDevice());
           }
+          break;
         }
     }
   }
@@ -115,12 +104,9 @@ class BleCubit extends Cubit<BleStates> {
         emit(SuccessFullyConnected());
       } else if (update.connectionState == DeviceConnectionState.disconnected) {
         Logger().i('disconnected');
-        connectDevice(deviceId: deviceId);
       } else {
         Logger().i(update);
-        // Logger().i("ELSE");
         isConnected = false;
-        // emit(ScanningDevice());
       }
     }, onError: (Object error) {
       Logger().i(error);

@@ -18,23 +18,18 @@ class LockAndUnlock extends StatefulWidget {
 class _LockAndUnlockState extends State<LockAndUnlock> {
   bool isLoading = false;
   final flutterBle = FlutterReactiveBle();
-
   @override
   void initState() {
     super.initState();
     LockCubit cubit = BlocProvider.of<LockCubit>(context);
     cubit.batteryValues(context);
-    Future.delayed(const Duration(seconds: 3)).then(
-      (value) {
-        cubit.readLockStateValues(context);
-      },
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LockCubit, LockStates>(builder: (ctx, state) {
       LockCubit cubit = BlocProvider.of<LockCubit>(context);
+
       final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
       return SafeArea(
           child: Scaffold(
@@ -192,19 +187,13 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
             SizedBox(
               height: 21.h,
             ),
-            if (cubit.batteryValues(context) == true)
-              FutureBuilder(
-                  future: BlocProvider.of<LockCubit>(context)
-                      .batteryValues(context),
-                  builder: (context, AsyncSnapshot snapshot) {
-                    return const BatteryBleRead();
-                  }),
+            const BatteryBleRead(),
             SizedBox(
               height: 64.h,
             ),
             FutureBuilder(
                 future: BlocProvider.of<LockCubit>(context)
-                    .renderLockStateWidget(context),
+                    .renderLockAndUnlockWidgets(context),
                 builder: (context, AsyncSnapshot<Widget> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();

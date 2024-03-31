@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_lock_app/controller/cubits/lockCubit/lockCubit.dart';
+import 'package:smart_lock_app/controller/lockConditions/actionClass.dart';
 
 class LockClosed extends StatelessWidget {
   const LockClosed({super.key});
@@ -11,7 +14,13 @@ class LockClosed extends StatelessWidget {
     return Column(
       children: [
         GestureDetector(
-          onLongPress: () {},
+          onLongPress: () async {
+            final lockActions =
+                LockActions(BlocProvider.of<LockCubit>(context));
+            await lockActions.unLockAction(
+              context,
+            );
+          },
           child: Stack(
             children: [
               SvgPicture.asset(
