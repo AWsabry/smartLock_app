@@ -17,7 +17,7 @@ class BleCubit extends Cubit<BleStates> {
   StreamSubscription<ConnectionStateUpdate>? connectSub;
   StreamSubscription<List<int>>? notifySub;
 
-  String deviceId = '40:4C:CA:48:54:1A';
+  String deviceId = '';
   String deviceName = 'Smart Lock FP1 Test';
 
   List<int> valueInDevice = [];
@@ -70,9 +70,11 @@ class BleCubit extends Cubit<BleStates> {
         emit(ScanningDevice());
         Logger().i('Scanning For Device');
 
-        if (device.name == deviceName && device.id == deviceId) {
+        if (device.name == deviceName) {
+          deviceId = device.id;
           _found = true;
           Logger().i(_found);
+          Logger().d(deviceId);
           try {
             emit(SuccessFullyFoundDevice());
           } catch (e) {
