@@ -9,3 +9,5 @@ This branch need to be tested with the devices, compare it with the master to kn
 
 
 -- Also snackbar need to be added when the device is found and when it's connected, just to indicate the user with better useability experience. 
+
+-- After that some changes in the UI should happen after checking with the product design team.
