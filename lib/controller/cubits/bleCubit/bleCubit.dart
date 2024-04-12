@@ -17,7 +17,7 @@ class BleCubit extends Cubit<BleStates> {
   StreamSubscription<ConnectionStateUpdate>? connectSub;
   StreamSubscription<List<int>>? notifySub;
 
-  String deviceId = '40:4C:CA:41:27:C6';
+  String deviceId = '40:4C:CA:48:54:1A';
   String deviceName = 'Smart Lock FP1 Test';
 
   List<int> valueInDevice = [];
