@@ -1,16 +1,7 @@
-# smart_lock_app
+# Smart_lock_app
 
-A new Flutter project.
+## Checking with the name of the device not static id
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This branch need to be tested with the devices, compare it with the master to know what have been actually changed.
+-- Search with the name, detect the id and store it in a variable, just storing the variable in (Controller/cubits/bleCubit.dart) line 74, need to be checked if it happens correctly.
+-- Also snackbar need to be added when the device is found and when it's connected, just to indicate the user with better useability experience. 
