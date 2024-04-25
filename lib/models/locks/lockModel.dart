@@ -8,10 +8,5 @@ class LockModel {
 }
 
 List<LockModel> demoLockData = [
-  LockModel(
-      name: 'Front Doorasdaasdasdasdasdsd',
-      isLocked: true,
-      location: 'Zayed Home'),
-  LockModel(name: 'Back Door', isLocked: false, location: 'Zayed Home'),
-  LockModel(name: 'Garage', isLocked: true, location: 'Zayed Home'),
+  LockModel(name: 'Front Door', isLocked: true, location: 'Sherif Home'),
 ];

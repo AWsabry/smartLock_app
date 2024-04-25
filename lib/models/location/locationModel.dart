@@ -14,11 +14,9 @@ class LocationModel {
 
 List<LocationModel> demoLocationData = [
   LocationModel(
-    homeName: 'Zayed Home',
+    homeName: 'Sherif Home',
     locks: {
       'Front Door': demoLockData[0],
-      'Back Door': demoLockData[1],
-      'Garage': demoLockData[2],
     },
     numberOfLockes: demoLockData.length,
   ),

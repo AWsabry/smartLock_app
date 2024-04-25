@@ -19,7 +19,6 @@ class LockCardItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print('asd');
         Navigator.push(
             context,
             MaterialPageRoute(

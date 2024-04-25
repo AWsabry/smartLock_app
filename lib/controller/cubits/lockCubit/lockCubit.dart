@@ -20,7 +20,7 @@ class LockCubit extends Cubit<LockStates> {
   // Check if the door is opened or not
   bool isDoorOpen = true;
   // Calibration Check
-  bool calibrationSuccess = false;
+  bool? calibrationSuccess;
 
   List<int> valueInDevice = [];
   // ignore: prefer_typing_uninitialized_variables
@@ -165,6 +165,7 @@ class LockCubit extends Cubit<LockStates> {
 
   Future<Widget> renderLockAndUnlockWidgets(context) async {
     if (await checkConnection(context)) {
+      Logger().f(state.toString());
       switch (state) {
         case LockedSuccessfully():
           return const LockClosed();
@@ -193,6 +194,7 @@ class LockCubit extends Cubit<LockStates> {
       bleCubit.isConnected = true;
       Logger().i("Write successful");
       emit(WriteSuccessfully());
+      Logger().e("data is $data");
       switch (data) {
         case 2:
           emit(LockedSuccessfully());
@@ -264,7 +266,7 @@ class LockCubit extends Cubit<LockStates> {
   }
 
   // Calibrating Status
-  Future calibrationCharacteristic(context) async {
+  Future<bool> calibrationCharacteristic(context) async {
     print("Calibration Response");
     try {
       var bleCubit = BleCubit.get(context);
@@ -284,14 +286,15 @@ class LockCubit extends Cubit<LockStates> {
           calibrationSuccess = false;
           return false;
         case 4:
-          return 'in Progress';
+          return false;
         default:
-          return 'in Progress';
+          return false;
       }
     } catch (e) {
       Logger().e(e);
     }
     Logger().i('State Written is $calibrationSuccess');
+    return calibrationSuccess!;
   }
 
   // Function to Calibrate the lock

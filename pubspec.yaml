@@ -37,12 +37,16 @@ dependencies:
   cupertino_icons: ^1.0.6
   google_fonts: ^6.2.1
   flutter_screenutil: ^5.9.0
+  app_settings: ^5.1.1
+  conditional_builder_null_safety: ^0.0.6
+  bluetooth_enable_fork: ^0.1.6
   flutter_svg:
   auto_size_text:
   flutter_bloc: 
   get: ^4.6.5
-  permission_handler:
+  permission_handler: ^11.3.1
   flutter_reactive_ble: ^5.0.2
+  location: ^6.0.1
   logger:
   animated_text_kit:
 
