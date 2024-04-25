@@ -46,6 +46,7 @@ dependencies:
   get: ^4.6.5
   permission_handler: ^11.3.1
   flutter_reactive_ble: ^5.0.2
+  flutter_blue_plus: ^1.32.4
   location: ^6.0.1
   logger:
   animated_text_kit:

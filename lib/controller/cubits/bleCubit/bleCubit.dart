@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:bluetooth_enable_fork/bluetooth_enable_fork.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart' hide Logger;
 import 'package:location/location.dart' hide PermissionStatus;
 import 'package:logger/logger.dart';
@@ -30,50 +31,81 @@ class BleCubit extends Cubit<BleStates> {
 
   List<int> valueInDevice = [];
 
+  /// Requests Bluetooth permission and performs a scan for devices if permissions are granted.
+  ///
+  /// Args:
+  ///   [context] (BuildContext): The BuildContext used to retrieve the BleCubit.
+  ///
+  /// Returns:
+  ///   A [Future] that completes when the scan is cancelled or if there is an error.
+  ///
+
   Future<void> requestBluetoothPermission(
       {required BuildContext context}) async {
+    // Log the entry into the function.
     Logger().i('Entered');
-    final bluetoothEnabled = await BluetoothEnable.enableBluetooth;
-    PermissionStatus locationPermission = await Permission.location.request();
-    PermissionStatus bleScan = await Permission.bluetoothScan.request();
-    PermissionStatus bleConnect = await Permission.bluetoothConnect.request();
-    final location = Location();
-    final locationAccess = await location.serviceEnabled();
 
-    if (bluetoothEnabled == "true" &&
-        locationPermission.isGranted &&
+    // Enable Bluetooth.
+    final bluetoothEnabled = await FlutterBluePlus.turnOn();
+
+    // Request location permission.
+    final PermissionStatus locationPermission =
+        await Permission.location.request();
+
+    // Request Bluetooth scan permission.
+    final PermissionStatus bleScan = await Permission.bluetoothScan.request();
+
+    // Request Bluetooth connect permission.
+    final PermissionStatus bleConnect =
+        await Permission.bluetoothConnect.request();
+
+    // Request access to location services.
+    final location = Location();
+    final bool locationAccess = await location.serviceEnabled();
+
+    // If all permissions are granted and location access is enabled, perform a scan for devices.
+    if (locationPermission.isGranted &&
         bleScan.isGranted &&
         bleConnect.isGranted &&
-        locationAccess == true) {
-      if (state is SuccessFullyFoundDevice) {
-      } else if (state is SuccessFullyConnected) {
+        locationAccess) {
+      // Log the word 'khaled'.
+      log("khaled");
+
+      // If the current state is SuccessFullyFoundDevice or SuccessFullyConnected, do nothing.
+      if (state is SuccessFullyFoundDevice || state is SuccessFullyConnected) {
+        // Do nothing.
       } else {
+        // Perform a scan for devices and listen for results.
         scanSub = _ble.scanForDevices(
           withServices: [],
           scanMode: ScanMode.lowLatency,
-        ).listen(
-          (device) {
-            log(device.name);
-            if (device.name.isNotEmpty && device.name == deviceName) {
-              Logger().e(state);
+        ).listen((DiscoveredDevice device) {
+          // If the device name is not empty and matches the desired device name, perform further actions.
+          if (device.name.isNotEmpty && device.name == deviceName) {
+            Logger().e(state);
 
-              discoveredDeviceName = device.name;
-              discoveredDeviceId = device.id;
-              discoveredDevice = device;
-              scanForDevice(device: discoveredDevice!, context: context);
-              scanSub!.cancel();
-            }
-          },
-        );
+            discoveredDeviceName = device.name;
+            discoveredDeviceId = device.id;
+            discoveredDevice = device;
+            scanForDevice(device: discoveredDevice!, context: context);
+            scanSub!.cancel();
+          }
+        });
       }
-    } else if (locationPermission.isDenied) {
+    }
+    // If location permission is denied, request it again.
+    else if (locationPermission.isDenied) {
       log("aaa");
 
       await Permission.location.request();
-    } else if (locationAccess == false) {
+    }
+    // If location access is disabled, request it.
+    else if (!locationAccess) {
       await location.requestService();
-    } else {
-      log("Khaled");
+    }
+    // If Bluetooth is not enabled, enable it.
+    else {
+      log("Khaledeeed");
       await BluetoothEnable.enableBluetooth;
     }
   }
