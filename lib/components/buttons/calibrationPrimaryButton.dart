@@ -7,9 +7,11 @@ class CalibrationPrimaryButton extends StatelessWidget {
   const CalibrationPrimaryButton({
     super.key,
     required this.onTap,
+    required this.text,
   });
 
   final VoidCallback onTap;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +19,7 @@ class CalibrationPrimaryButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: 42.h,
-        width: 173.w,
+        width: 350.w,
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(
             Radius.circular(6),
@@ -28,9 +30,9 @@ class CalibrationPrimaryButton extends StatelessWidget {
           children: [
             Padding(
               padding: EdgeInsets.only(
-                left: 32.w,
+                left: 114.w,
               ),
-              child: Text('Next Step',
+              child: Text(text,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inter(
                     textStyle: TextStyle(

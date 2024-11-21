@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
             ),
           ],
           child: MaterialApp(
+            debugShowCheckedModeBanner: false,
             title: 'Smart Lock',
             theme: MyTheme.lightTheme,
             home: const LandingScreen(),

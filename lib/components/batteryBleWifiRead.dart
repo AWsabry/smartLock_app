@@ -50,18 +50,6 @@ class _BatteryBleReadState extends State<BatteryBleRead> {
                           ),
                         ),
                       ),
-                    if (cubit.batteryValue == null)
-                      Text(
-                        "Loading",
-                        textAlign: TextAlign.left,
-                        style: GoogleFonts.nunitoSans(
-                          textStyle: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 5.sp,
-                            color: const Color.fromRGBO(30, 64, 175, 1),
-                          ),
-                        ),
-                      ),
                   ],
                 ),
               ),

@@ -7,41 +7,46 @@ class CalibrationSecondaryButton extends StatelessWidget {
   const CalibrationSecondaryButton({
     super.key,
     required this.onTap,
-    required this.title,
-    required this.height,
+    required this.text,
     required this.width,
   });
 
-  final String title;
   final VoidCallback onTap;
-  final double height;
+  final String text;
   final double width;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: height.h,
+        height: 42.h,
         width: width.w,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.all(
-            Radius.circular(6),
+            const Radius.circular(6).r,
           ),
-          color: Colors.white,
+          color: const Color.fromRGBO(31, 41, 55, 1),
         ),
         child: Row(
           children: [
-            SvgPicture.asset(
-              'assets/Icons/arrow-left.svg',
-              color: const Color.fromRGBO(229, 231, 235, 1),
+            Padding(
+              padding: EdgeInsets.only(
+                left: 16.w,
+              ),
+              child: Text(text,
+                  style: GoogleFonts.inter(
+                    textStyle: TextStyle(
+                        fontSize: 16.sp,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500),
+                  )),
             ),
-            Text('Previous Step',
-                style: GoogleFonts.inter(
-                  textStyle: TextStyle(
-                      fontSize: 16.sp,
-                      color: const Color.fromRGBO(229, 231, 235, 1),
-                      fontWeight: FontWeight.w500),
-                )),
+            Padding(
+              padding: EdgeInsets.only(left: width == 193 ? 16.w : 7.w),
+              child: SvgPicture.asset(
+                'assets/Icons/arrow-right.svg',
+              ),
+            ),
           ],
         ),
       ),

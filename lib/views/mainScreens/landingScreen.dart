@@ -29,7 +29,6 @@ class _LandingScreenState extends State<LandingScreen> {
     } else if (bleCubit.state is SuccessFullyConnected) {
       bleCubit.isConnected = true;
     } else {
-      bleCubit.requestLocationPermission(context: context);
       bleCubit.isConnected = false;
     }
   }
@@ -71,9 +70,14 @@ class _LandingScreenState extends State<LandingScreen> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const LoginScreen()));
+                        },
                         child: Text(
-                          'I received an Invitation',
+                          'Log into my Account',
                           style: TextStyle(
                               fontSize: 12.sp,
                               color: Colors.white,
@@ -119,7 +123,7 @@ class _LandingScreenState extends State<LandingScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const LoginScreen()));
+                        builder: (context) => const CalibrationScreen()));
               },
               title: 'Setup My Lock',
             ),
@@ -133,7 +137,7 @@ class _LandingScreenState extends State<LandingScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const CalibrationScreen()));
+                        builder: (context) => const LoginScreen()));
               },
               title: 'I received an invitation',
             )

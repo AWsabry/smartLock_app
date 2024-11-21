@@ -72,7 +72,7 @@ class LocksScreen extends StatelessWidget {
                       padding:
                           EdgeInsets.only(top: 25.h, left: 67.w, bottom: 32.h),
                       child: Text(
-                        'Zayed Home',
+                        'Sherif Home',
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                         style: GoogleFonts.inter(

@@ -31,7 +31,7 @@ def keystorePropertiesFile = rootProject.file('key.properties')
 
 android {
     namespace "com.example.smart_lock_app"
-    compileSdk flutter.compileSdkVersion
+    compileSdk 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -61,15 +61,15 @@ android {
 
    signingConfigs {
        release {
-           keyAlias keystoreProperties['keyAlias']
-           keyPassword keystoreProperties['keyPassword']
            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
            storePassword keystoreProperties['storePassword']
+           keyAlias keystoreProperties['keyAlias']
+           keyPassword keystoreProperties['keyPassword']
        }
    }
    buildTypes {
             release {
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.debug
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     def appName = "Smart Lock"

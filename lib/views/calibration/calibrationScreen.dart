@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,7 +9,7 @@ import 'package:smart_lock_app/components/buttons/calibrationPrimaryButton.dart'
 import 'package:smart_lock_app/components/buttons/calibrationSecondaryButton.dart';
 import 'package:smart_lock_app/constants/constants.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockCubit.dart';
-import 'package:smart_lock_app/views/calibration/calibrationSuccessScreen.dart';
+import 'package:smart_lock_app/views/calibration/calibrationLoadingScreen.dart';
 
 class CalibrationScreen extends StatefulWidget {
   const CalibrationScreen({super.key});
@@ -22,8 +24,7 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
   void goToNextStep() {
     LockCubit cubit = BlocProvider.of<LockCubit>(context);
     setState(() {
-      if (currentStepIndex < SmartLockAppConstants.calibration.length - 1) {
-        currentStepIndex++;
+      if (currentStepIndex < SmartLockAppConstants.calibration.length) {
         print("current Step$currentStepIndex");
         if (currentStepIndex == 1) {
           cubit.startCalibration(context);
@@ -39,33 +40,16 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
           print("Calibration JULP");
 
           cubit.lockingMechanismCalibration(context, data: 5);
-        } else if (currentStepIndex + 1 ==
-            SmartLockAppConstants.calibration.length) {
-          print("Calibration JLP");
-          cubit.lockingMechanismCalibration(context, data: 4);
-          Future.delayed(const Duration(seconds: 5)).then(
-            (value) {
-              cubit.calibrationCharacteristic(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const CalibrationSuccess(),
-                ),
-              );
-            },
-          );
         }
-      } else {
-        return;
-      }
+      } else {}
     });
   }
 
   @override
   Widget build(BuildContext context) {
     Map currentStep = SmartLockAppConstants.calibration[currentStepIndex];
-    int count = currentStepIndex + 1;
-
+    int count = currentStepIndex;
+    log(count.toString());
     return SafeArea(
       child: Scaffold(
         appBar: const CustomAppBar(title: 'Calibrate Your Lock'),
@@ -103,7 +87,7 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
                       Radius.circular(8),
                     ),
                     child: Image.asset(
-                      'assets/Images/calibration.png',
+                      currentStep['image'],
                       fit: BoxFit.cover,
                       width: 390.w,
                       height: 241.h,
@@ -112,98 +96,100 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
                 ),
               ),
               SizedBox(height: 17.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Step',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
-                      textStyle: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
-                        color: const Color.fromRGBO(156, 163, 175, 1),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      right: 6.w,
-                      left: 8.w,
-                    ),
-                    child: Container(
-                      height: 20.h,
-                      width: 20.w,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                            4.r), // Adjust the radius as needed
+              count != 0
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Step',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.inter(
+                            textStyle: TextStyle(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w600,
+                              color: const Color.fromRGBO(156, 163, 175, 1),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            right: 6.w,
+                            left: 8.w,
+                          ),
+                          child: Container(
+                            height: 20.h,
+                            width: 20.w,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                  4.r), // Adjust the radius as needed
 
-                        color: const Color.fromRGBO(
-                          31,
-                          41,
-                          55,
-                          1,
+                              color: const Color.fromRGBO(
+                                31,
+                                41,
+                                55,
+                                1,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                top: 2.h,
+                              ),
+                              child: Text(
+                                "$count",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.inter(
+                                  textStyle: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          top: 2.h,
-                        ),
-                        child: Text(
-                          "$count",
+                        Text(
+                          "/",
                           textAlign: TextAlign.center,
                           style: GoogleFonts.inter(
                             textStyle: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w600,
-                              color: Colors.white,
+                              color: const Color.fromRGBO(156, 163, 175, 1),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                  Text(
-                    "/",
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
-                      textStyle: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
-                        color: const Color.fromRGBO(156, 163, 175, 1),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: 6.w,
-                    ),
-                    child: Container(
-                      height: 20.h,
-                      width: 20.w,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4.r), //
-                          color: const Color.fromRGBO(240, 249, 255, 1)),
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          top: 2.h,
-                        ),
-                        child: Text(
-                          "6",
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.inter(
-                            textStyle: TextStyle(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w600,
-                              color: const Color.fromRGBO(31, 41, 55, 1),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: 6.w,
+                          ),
+                          child: Container(
+                            height: 20.h,
+                            width: 20.w,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4.r), //
+                                color: const Color.fromRGBO(240, 249, 255, 1)),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                top: 2.h,
+                              ),
+                              child: Text(
+                                "4",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.inter(
+                                  textStyle: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color.fromRGBO(31, 41, 55, 1),
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                      ],
+                    )
+                  : Container(),
               SizedBox(height: 28.h),
               Padding(
                 padding: EdgeInsets.only(left: 24.w, right: 29.w),
@@ -226,29 +212,53 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
         bottomNavigationBar: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Padding(
-              padding: EdgeInsets.only(left: 18.w, bottom: 16.h, top: 90.h),
-              child: CalibrationSecondaryButton(
-                onTap: () {},
-                title: 'Next Step',
-                height: 42,
-                width: 173,
-              ),
-            ),
-            SizedBox(
-              width: 10.w,
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: 16.w, bottom: 16.h, top: 90.h),
-              child: CalibrationPrimaryButton(
-                onTap: () {
-                  goToNextStep();
-                  print(currentStepIndex + 1);
-                  // print(count);
-                  print(SmartLockAppConstants.calibration.length);
-                },
-              ),
-            ),
+            currentStepIndex == 0
+                ? Padding(
+                    padding: EdgeInsets.only(
+                        right: 16.w, bottom: 16.h, top: 90.h, left: 16.w),
+                    child: CalibrationPrimaryButton(
+                      text: "Let's Start",
+                      onTap: () {
+                        currentStepIndex++;
+
+                        goToNextStep();
+                        // print(count);
+                        print(SmartLockAppConstants.calibration.length);
+                      },
+                    ),
+                  )
+                : Padding(
+                    padding: EdgeInsets.only(
+                        right: 16.w,
+                        bottom: 16.h,
+                        top: 90.h,
+                        left: currentStepIndex < 4 ? 181.w : 172.w),
+                    child: CalibrationSecondaryButton(
+                      width: currentStepIndex < 4 ? 193 : 202,
+                      text: currentStepIndex < 4
+                          ? "Done, go to next"
+                          : "Done with All Steps",
+                      onTap: () {
+                        currentStepIndex++;
+
+                        if (currentStepIndex < 5) {
+                          print(currentStepIndex);
+                          goToNextStep();
+                        } else {
+                          BlocProvider.of<LockCubit>(context)
+                              .lockingMechanismCalibration(context, data: 4)
+                              .then((value) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const CalibrationLoadingScreen(),
+                                ));
+                          });
+                        }
+                      },
+                    ),
+                  )
           ],
         ),
       ),

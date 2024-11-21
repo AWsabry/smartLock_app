@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_lock_app/components/batteryBleWifiRead.dart';
+import 'package:smart_lock_app/controller/cubits/bleCubit/bleCubit.dart';
+import 'package:smart_lock_app/controller/cubits/bleCubit/bleStates.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockCubit.dart';
 import 'package:smart_lock_app/controller/cubits/lockCubit/lockStates.dart';
 
@@ -18,18 +20,13 @@ class LockAndUnlock extends StatefulWidget {
 class _LockAndUnlockState extends State<LockAndUnlock> {
   bool isLoading = false;
   final flutterBle = FlutterReactiveBle();
-  @override
-  void initState() {
-    super.initState();
-    LockCubit cubit = BlocProvider.of<LockCubit>(context);
-    cubit.batteryValues(context);
-  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LockCubit, LockStates>(builder: (ctx, state) {
-      LockCubit cubit = BlocProvider.of<LockCubit>(context);
-
+    return BlocBuilder<BleCubit, BleStates>(builder: (context, state) {
+      Future.wait([
+        BleCubit.get(context).requestBluetoothPermission(context: context),
+      ]);
       final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
       return SafeArea(
           child: Scaffold(
@@ -155,7 +152,7 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
                                         color: Colors.white)),
                               ),
                               Text(
-                                'Zayed Home',
+                                'Sherif Home',
                                 textAlign: TextAlign.left,
                                 style: GoogleFonts.inter(
                                     textStyle: TextStyle(
@@ -191,22 +188,99 @@ class _LockAndUnlockState extends State<LockAndUnlock> {
             SizedBox(
               height: 64.h,
             ),
-            FutureBuilder(
-                future: BlocProvider.of<LockCubit>(context)
-                    .renderLockAndUnlockWidgets(context),
-                builder: (context, AsyncSnapshot<Widget> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  } else {
-                    if (snapshot.hasError) {
-                      // Show error message
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      // Show the widget returned by the future
-                      return snapshot.data ?? const Text('No Data');
-                    }
-                  }
-                })
+            state is SuccessFullyFoundDevice
+                ? Stack(
+                    children: [
+                      Container(
+                        width: 239.0.w,
+                        height: 239.0.h,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color.fromRGBO(228, 228, 235, 1),
+                          border: Border.all(
+                            color: const Color.fromRGBO(228, 228, 235, 1),
+                            width: 20.0.w,
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Connecting",
+                            style: GoogleFonts.nunitoSans(
+                              textStyle: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 17.sp,
+                                color: const Color.fromRGBO(
+                                  255,
+                                  255,
+                                  255,
+                                  1,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : state is SuperBleStates
+                    ? const Center(child: CircularProgressIndicator())
+                    : state is FailedToConnect
+                        ? Stack(
+                            children: [
+                              Container(
+                                width: 239.0.w,
+                                height: 239.0.h,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: const Color.fromRGBO(228, 228, 235, 1),
+                                  border: Border.all(
+                                    color:
+                                        const Color.fromRGBO(228, 228, 235, 1),
+                                    width: 20.0.w,
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Disconnected",
+                                    style: GoogleFonts.nunitoSans(
+                                      textStyle: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 17.sp,
+                                        color: const Color.fromRGBO(
+                                          255,
+                                          255,
+                                          255,
+                                          1,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : BlocBuilder<LockCubit, LockStates>(
+                            builder: (context, state) {
+                            return FutureBuilder(
+                                future: BlocProvider.of<LockCubit>(context)
+                                    .renderLockAndUnlockWidgets(context),
+                                builder:
+                                    (context, AsyncSnapshot<Widget> snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const CircularProgressIndicator();
+                                  } else {
+                                    if (snapshot.hasError) {
+                                      // Show error message
+                                      return Text('Error: ${snapshot.error}');
+                                    } else {
+                                      // Show the widget returned by the future
+                                      return snapshot.data ??
+                                          const Text('No Data');
+                                    }
+                                  }
+                                });
+                          })
           ],
         ),
       ));
